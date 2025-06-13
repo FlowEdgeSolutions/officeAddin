@@ -13,7 +13,7 @@
 - 🌗 **Dark Mode Toggle** für bessere Lesbarkeit
 - 🔒 **Zwei Verarbeitungsmodi:**
   - Azure OpenAI (schnell, Cloud)
-  - Ollama (datenschutzfreundlich, lokal)
+  - Ollama (datenschutzfreundlich, lokal) - Einrichtung ist noch nicht erfolgt!
 
 ---
 
