@@ -10,7 +10,7 @@
   <Version>1.0.0.0</Version>
   <ProviderName>MailAider</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="MailAider AI" />
+  <DisplayName DefaultValue="MailAider AI FLE" />
   <Description
     DefaultValue="Ein Outlook-Add-in mit dem Ziel, E-Mails mithilfe eines intelligenten KI-Assistenten zu analysieren, bearbeiten oder automatisch zu beantworten." />
   <IconUrl DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png" />
@@ -38,7 +38,7 @@
     <Form xsi:type="ItemRead">
       <DesktopSettings>
         <SourceLocation
-          DefaultValue="https://witty-stone-066af150f.6.azurestaticapps.net/taskpane.html" />
+          DefaultValue="https://orange-dune-0a75eea0f.6.azurestaticapps.net/index.html" />
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -98,7 +98,7 @@
         <bt:Url id="functionFile"
           DefaultValue="https://witty-stone-066af150f.6.azurestaticapps.net/function.html" />
         <bt:Url id="taskPaneUrl"
-          DefaultValue="https://witty-stone-066af150f.6.azurestaticapps.net/taskpane.html" />
+          DefaultValue="https://witty-stone-066af150f.6.azurestaticapps.net/index.html" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="groupLabel" DefaultValue="MailAider Add-In" />
