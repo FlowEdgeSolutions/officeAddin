@@ -771,7 +771,7 @@
 
         async function summarizeEmail() {
             if (emailContent) {
-                const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in kurzen, prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
+                const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
                 const response = await callAzure(fullPrompt);
                 emailSummaryDiv.innerText = response || "Keine Zusammenfassung verfügbar.";
             }
