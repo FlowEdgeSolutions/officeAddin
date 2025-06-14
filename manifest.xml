@@ -7,7 +7,7 @@
 
   <!-- Grundkonfiguration -->
   <Id>7f8e9c2a-4b3d-4f7e-9a1c-8b7f6a3d5e2f</Id>
-  <Version>1.0.0.1</Version>
+  <Version>1.0.0.2</Version>
   <ProviderName>MailAider</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="MailAider AI FLE" />
@@ -20,7 +20,7 @@
 
   <!-- Domänen und Hosts -->
   <AppDomains>
-    <AppDomain>https://witty-stone-066af150f.6.azurestaticapps.net</AppDomain>
+    <AppDomain>https://orange-dune-0a75eea0f.6.azurestaticapps.net/</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox" />
@@ -96,9 +96,9 @@
       </bt:Images>
       <bt:Urls>
         <bt:Url id="functionFile"
-          DefaultValue="https://witty-stone-066af150f.6.azurestaticapps.net/function.html" />
+          DefaultValue="https://orange-dune-0a75eea0f.6.azurestaticapps.net/function.html" />
         <bt:Url id="taskPaneUrl"
-          DefaultValue="https://witty-stone-066af150f.6.azurestaticapps.net/index.html" />
+          DefaultValue="https://orange-dune-0a75eea0f.6.azurestaticapps.net/index.html" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="groupLabel" DefaultValue="MailAider Add-In" />
