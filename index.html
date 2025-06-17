@@ -724,7 +724,7 @@
                     body: JSON.stringify({
                         model: "nous-hermes2",
                         messages: [
-                            { role: "system", content: "Rolle: Du bist ein professioneller E-Mail-Assistent. Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Ignoriere die Grussformel beim Beantworten von E-Mails, sofern nicht ausdrücklich anders angegeben. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Füge keinen Betreff in die Antwort ein. Verzichte am Ende auf eine Grussformel, sofern nicht ausdrücklich anders angegeben."},
+                            { role: "system", content: "Rolle: Du bist ein professioneller E-Mail-Assistent."},
                             { role: "user", content: prompt }
                         ],
                         stream: false
@@ -755,7 +755,7 @@
             if (action === "zusammenfassen") {
                 fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte?\n\n${emailText}${promptInput}`;
             } else if (action === "antworten") {
-                fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}):\n${emailText}${promptInput}`;
+                fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus, sofern nicht ausdrücklich anders angegeben. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel, sofern nicht ausdrücklich anders angegeben.:\n${emailText}${promptInput}`;
             } else if (action === "übersetzen") {
                 fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(language)}:\n${emailText}${promptInput}`;
             } else if (action === "freierModus") {
