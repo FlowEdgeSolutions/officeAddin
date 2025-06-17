@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MailAider</title>
+    <title>MailAider AI</title>
     <meta charset="UTF-8" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script
+      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+      type="module"
+    ></script>
+
     <style>
       * {
         margin: 0;
@@ -526,8 +531,15 @@
           alt="MailAider Logo"
           class="logo"
         />
-        <h1 class="main-heading">MailAider</h1>
-        <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
+        <h1 class="main-heading">MailAider AI</h1>
+        <dotlottie-player
+          src="https://lottie.host/2622c829-466b-4bd8-8180-a7bc5fc333a4/ndF0dcF67u.lottie"
+          background="transparent"
+          speed="1"
+          style="width: 300px; height: 300px"
+          loop
+          autoplay
+        ></dotlottie-player>
       </div>
       <div class="error" id="error"></div>
       <div class="email-viewer">
