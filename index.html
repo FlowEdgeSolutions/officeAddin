@@ -724,7 +724,7 @@
                     body: JSON.stringify({
                         model: "nous-hermes2",
                         messages: [
-                            { role: "system", content: "Rolle: Du bist ein professioneller E-Mail-Assistent. Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt – ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Grussformel: Ignoriere die Grussformel beim Beantworten von E-Mails, sofern nicht ausdrücklich anders angegeben. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus."},
+                            { role: "system", content: "Rolle: Du bist ein professioneller E-Mail-Assistent. Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt – ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Grussformel: Ignoriere die Grussformel beim Beantworten von E-Mails. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus."},
                             { role: "user", content: prompt }
                         ],
                         stream: false
