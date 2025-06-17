@@ -1,829 +1,987 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>MailAider</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.5;
-            font-weight: 400;
-            color: #333;
-            background: #fff;
-            padding: 0.25rem;
-            max-width: 350px;
-            margin: 0 auto;
-            transition: background 0.3s;
-        }
-        .dark-mode {
-            background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
-            color: #e0e0e0;
-        }
-        .dark-mode .container {
-            background: rgba(44, 47, 51, 0.9);
-            border-color: #4a4e57;
-        }
-        .dark-mode .email-viewer, .dark-mode .output-container, .dark-mode .input-container {
-            background: rgba(34, 37, 41, 0.7);
-            border-color: #4a4e57;
-        }
-        .dark-mode .email-body, .dark-mode .summary, .dark-mode #output {
-            background: rgba(40, 44, 52, 0.5);
-            border-color: #4a4e57;
-        }
-        .dark-mode .input-container input, .dark-mode select {
-            background: rgba(40, 44, 52, 0.7);
-            border-color: #4a4e57;
-            color: #e0e0e0;
-        }
-        .dark-mode .send-button {
-            background: #1e90ff;
-        }
-        .dark-mode .send-button:hover:not(:disabled) {
-            background: #87cefa;
-        }
-        .dark-mode .copy-button {
-            background: rgba(255, 255, 255, 0.1);
-            color: #1e90ff;
-        }
-        .dark-mode .copy-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #87cefa;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 0.5rem;
-        }
-        .header {
-            position: relative;
-            padding: 0.5rem;
-            border-bottom: 1px solid #ccc;
-            text-align: center;
-            display: flex;
-            align-items: center;
-        }
-        .logo {
-            width: 30px;
-            height: auto;
-            margin-right: 0.5rem;
-        }
-        .main-heading {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: #1e90ff;
-        }
-        .dark-mode .main-heading {
-            color: #87cefa;
-        }
-        .dark-mode-toggle {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            font-size: 1.2rem;
-            cursor: pointer;
-            color: #1e90ff;
-        }
-        .dark-mode .dark-mode-toggle {
-            color: #87cefa;
-        }
-        .action-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin: 0.5rem 0;
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-        }
-        .dark-mode .action-buttons {
-            background: rgba(34, 37, 41, 0.7);
-            border-color: #4a4e57;
-            box-shadow: 0 3px 15px rgba(0, 240, 255, 0.1);
-        }
-        .action-button {
-            background: none;
-            border: none;
-            padding: 0.5rem;
-            font-size: 1.5rem;
-            color: #1e90ff;
-            cursor: pointer;
-            transition: color 0.2s ease;
-            flex: 1;
-            text-align: center;
-            border-right: 1px solid #ccc;
-            position: relative;
-        }
-        .dark-mode .action-button {
-            color: #87cefa;
-        }
-        .action-button:hover {
-            color: #00ff7f;
-        }
-        .action-button:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            top: -2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e90ff;
-            color: #fff;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-        .dark-mode .action-button:hover {
-            color: #00ff7f;
-        }
-        .action-button:last-child {
-            border-right: none;
-        }
-        .email-viewer, .output-container, .input-container {
-            padding: 0.5rem;
-            margin: 0.5rem 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-        }
-        .dark-mode .email-viewer, .dark-mode .output-container, .dark-mode .input-container {
-            background: rgba(34, 37, 41, 0.7);
-            border-color: #4a4e57;
-            box-shadow: 0 3px 15px rgba(0, 240, 255, 0.1);
-        }
-        .email-header {
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #ccc;
-        }
-        .dark-mode .email-header {
-            border-bottom-color: #4a4e57;
-        }
-        .email-header h2 {
-            font-weight: 700;
-            color: #333;
-            font-size: 1rem;
-        }
-        .dark-mode .email-header h2 {
-            color: #e0e0e0;
-        }
-        .email-header p {
-            color: #666;
-            font-size: 0.85rem;
-            margin: 0;
-        }
-        .dark-mode .email-header p {
-            color: #a0a0a0;
-        }
-        .email-body {
-            margin-top: 0.5rem;
-            line-height: 1.6;
-            color: #333;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.5rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            height: 200px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #1e90ff #fff;
-            display: none;
-        }
-        .dark-mode .email-body {
-            color: #e0e0e0;
-            background: rgba(40, 44, 52, 0.5);
-            border-color: #4a4e57;
-            scrollbar-color: #87cefa #000;
-        }
-        .email-body.active {
-            display: block;
-        }
-        .email-body::-webkit-scrollbar {
-            width: 8px;
-        }
-        .email-body::-webkit-scrollbar-track {
-            background: #fff;
-        }
-        .dark-mode .email-body::-webkit-scrollbar-track {
-            background: #2c2f33;
-        }
-        .email-body::-webkit-scrollbar-thumb {
-            background-color: #1e90ff;
-            border-radius: 4px;
-            border: 2px solid #fff;
-        }
-        .dark-mode .email-body::-webkit-scrollbar-thumb {
-            border-color: #2c2f33;
-            background-color: #87cefa;
-        }
-        .summary {
-            margin-top: 0.5rem;
-            line-height: 1.6;
-            color: #333;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.5rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #1e90ff #fff;
-        }
-        .dark-mode .summary {
-            color: #e0e0e0;
-            background: rgba(40, 44, 52, 0.5);
-            border-color: #4a4e57;
-            scrollbar-color: #87cefa #000;
-        }
-        .summary::-webkit-scrollbar {
-            width: 8px;
-        }
-        .summary::-webkit-scrollbar-track {
-            background: #fff;
-        }
-        .dark-mode .summary::-webkit-scrollbar-track {
-            background: #2c2f33;
-        }
-        .summary::-webkit-scrollbar-thumb {
-            background-color: #1e90ff;
-            border-radius: 4px;
-            border: 2px solid #fff;
-        }
-        .dark-mode .summary::-webkit-scrollbar-thumb {
-            border-color: #2c2f33;
-            background-color: #87cefa;
-        }
-        .show-full-email {
-            background: #1e90ff;
-            border: none;
-            padding: 0.25rem 0.5rem;
-            font-size: 0.8rem;
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 0.25rem;
-            width: auto;
-            transition: background 0.2s ease;
-        }
-        .dark-mode .show-full-email {
-            background: #1e90ff;
-        }
-        .show-full-email:hover {
-            background: #00ff7f;
-        }
-        .dark-mode .show-full-email:hover {
-            background: #00ff7f;
-        }
-        .output-container {
-            height: 250px;
-            overflow-y: auto;
-            position: relative;
-            padding: 0.5rem;
-            scrollbar-width: thin;
-            scrollbar-color: #1e90ff #fff;
-        }
-        .dark-mode .output-container {
-            scrollbar-color: #87cefa #000;
-        }
-        .output-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .output-container::-webkit-scrollbar-track {
-            background: #fff;
-        }
-        .dark-mode .output-container::-webkit-scrollbar-track {
-            background: #2c2f33;
-        }
-        .output-container::-webkit-scrollbar-thumb {
-            background-color: #1e90ff;
-            border-radius: 4px;
-            border: 2px solid #fff;
-        }
-        .dark-mode .output-container::-webkit-scrollbar-thumb {
-            border-color: #2c2f33;
-            background-color: #87cefa;
-        }
-        .output-container.processing::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 30px;
-            height: 30px;
-            border: 3px solid #1e90ff;
-            border-top: 3px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            transform: translate(-50%, -50%);
-            z-index: 20;
-        }
-        #output {
-            user-select: text;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            line-height: 1.6;
-            color: #333;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-        }
-        .dark-mode #output {
-            color: #e0e0e0;
-        }
-        .copy-button {
-            position: sticky;
-            bottom: 0.5rem;
-            right: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 0.25rem;
-            font-size: 0.9rem;
-            color: #1e90ff;
-            cursor: pointer;
-            transition: background 0.3s ease, color 0.3s ease;
-            z-index: 10;
-            margin-left: auto;
-            margin-right: 0;
-            display: block;
-        }
-        .dark-mode .copy-button {
-            border-color: #4a4e57;
-            color: #87cefa;
-        }
-        .copy-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #00ff7f;
-        }
-        .dark-mode .copy-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #00ff7f;
-        }
-        .input-container input {
-            width: 100%;
-            padding: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            color: #333;
-            font-size: 0.9rem;
-            transition: border-color 0.3s ease;
-        }
-        .dark-mode .input-container input {
-            background: rgba(40, 44, 52, 0.7);
-            border-color: #4a4e57;
-            color: #e0e0e0;
-        }
-        .input-container input:focus {
-            border-color: #1e90ff;
-            outline: none;
-        }
-        .send-button {
-            background: #1e90ff;
-            border-radius: 0;
-            padding: 0.5rem 1rem;
-            font-size: 0.95rem;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            width: 100%;
-            transition: background 0.2s ease;
-        }
-        .dark-mode .send-button {
-            background: #1e90ff;
-        }
-        .send-button:disabled {
-            background: rgba(255, 255, 255, 0.1);
-            cursor: not-allowed;
-        }
-        .dark-mode .send-button:disabled {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        .send-button:hover:not(:disabled) {
-            background: #00ff7f;
-        }
-        .dark-mode .send-button:hover:not(:disabled) {
-            background: #00ff7f;
-        }
-        .settings-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            min-width: 300px;
-            max-width: 90%;
-            z-index: 2000;
-            display: none;
-            font-family: 'Inter', sans-serif;
-        }
-        .dark-mode .settings-modal {
-            background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        .settings-modal.active {
-            display: block;
-        }
-        .form-group {
-            margin-bottom: 0.75rem;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            color: #333;
-            font-size: 0.9rem;
-        }
-        .dark-mode .form-group label {
-            color: #e0e0e0;
-        }
-        .form-group select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 2px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            background: #fff;
-            transition: border-color 0.3s ease;
-        }
-        .dark-mode .form-group select {
-            background: #2d2d2d;
-            border-color: #4a4e57;
-            color: #e0e0e0;
-        }
-        .form-group select:focus {
-            border-color: #1e90ff;
-            outline: none;
-        }
-        .error {
-            color: #ff6b6b;
-            font-size: 0.85rem;
-            margin: 0.5rem 0;
-            padding: 0.25rem;
-            background: rgba(255, 107, 107, 0.1);
-            border-radius: 4px;
-            display: none;
-        }
-        .dark-mode .error {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.2);
-        }
-        .error.active {
-            display: block;
-        }
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        line-height: 1.5;
+        font-weight: 400;
+        color: #333;
+        background: #fff;
+        padding: 0.25rem;
+        max-width: 350px;
+        margin: 0 auto;
+        transition: background 0.3s;
+      }
+      .dark-mode {
+        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
+        color: #e0e0e0;
+      }
+      .dark-mode .container {
+        background: rgba(44, 47, 51, 0.9);
+        border-color: #4a4e57;
+      }
+      .dark-mode .email-viewer,
+      .dark-mode .output-container,
+      .dark-mode .input-container {
+        background: rgba(34, 37, 41, 0.7);
+        border-color: #4a4e57;
+      }
+      .dark-mode .email-body,
+      .dark-mode .summary,
+      .dark-mode #output {
+        background: rgba(40, 44, 52, 0.5);
+        border-color: #4a4e57;
+      }
+      .dark-mode .input-container input,
+      .dark-mode select {
+        background: rgba(40, 44, 52, 0.7);
+        border-color: #4a4e57;
+        color: #e0e0e0;
+      }
+      .dark-mode .send-button {
+        background: #1e90ff;
+      }
+      .dark-mode .send-button:hover:not(:disabled) {
+        background: #87cefa;
+      }
+      .dark-mode .copy-button {
+        background: rgba(255, 255, 255, 0.1);
+        color: #1e90ff;
+      }
+      .dark-mode .copy-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #87cefa;
+      }
+      .container {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 0.5rem;
+      }
+      .header {
+        position: relative;
+        padding: 0.5rem;
+        border-bottom: 1px solid #ccc;
+        text-align: center;
+        display: flex;
+        align-items: center;
+      }
+      .logo {
+        width: 30px;
+        height: auto;
+        margin-right: 0.5rem;
+      }
+      .main-heading {
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #1e90ff;
+      }
+      .dark-mode .main-heading {
+        color: #87cefa;
+      }
+      .dark-mode-toggle {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1.2rem;
+        cursor: pointer;
+        color: #1e90ff;
+      }
+      .dark-mode .dark-mode-toggle {
+        color: #87cefa;
+      }
+      .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+      }
+      .dark-mode .action-buttons {
+        background: rgba(34, 37, 41, 0.7);
+        border-color: #4a4e57;
+        box-shadow: 0 3px 15px rgba(0, 240, 255, 0.1);
+      }
+      .action-button {
+        background: none;
+        border: none;
+        padding: 0.5rem;
+        font-size: 1.5rem;
+        color: #1e90ff;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        flex: 1;
+        text-align: center;
+        border-right: 1px solid #ccc;
+        position: relative;
+      }
+      .dark-mode .action-button {
+        color: #87cefa;
+      }
+      .action-button:hover {
+        color: #00ff7f;
+      }
+      .action-button:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: -2.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1e90ff;
+        color: #fff;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+      }
+      .dark-mode .action-button:hover {
+        color: #00ff7f;
+      }
+      .action-button:last-child {
+        border-right: none;
+      }
+      .email-viewer,
+      .output-container,
+      .input-container {
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+      }
+      .dark-mode .email-viewer,
+      .dark-mode .output-container,
+      .dark-mode .input-container {
+        background: rgba(34, 37, 41, 0.7);
+        border-color: #4a4e57;
+        box-shadow: 0 3px 15px rgba(0, 240, 255, 0.1);
+      }
+      .email-header {
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #ccc;
+      }
+      .dark-mode .email-header {
+        border-bottom-color: #4a4e57;
+      }
+      .email-header h2 {
+        font-weight: 700;
+        color: #333;
+        font-size: 1rem;
+      }
+      .dark-mode .email-header h2 {
+        color: #e0e0e0;
+      }
+      .email-header p {
+        color: #666;
+        font-size: 0.85rem;
+        margin: 0;
+      }
+      .dark-mode .email-header p {
+        color: #a0a0a0;
+      }
+      .email-body {
+        margin-top: 0.5rem;
+        line-height: 1.6;
+        color: #333;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        height: 200px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #1e90ff #fff;
+        display: none;
+      }
+      .dark-mode .email-body {
+        color: #e0e0e0;
+        background: rgba(40, 44, 52, 0.5);
+        border-color: #4a4e57;
+        scrollbar-color: #87cefa #000;
+      }
+      .email-body.active {
+        display: block;
+      }
+      .email-body::-webkit-scrollbar {
+        width: 8px;
+      }
+      .email-body::-webkit-scrollbar-track {
+        background: #fff;
+      }
+      .dark-mode .email-body::-webkit-scrollbar-track {
+        background: #2c2f33;
+      }
+      .email-body::-webkit-scrollbar-thumb {
+        background-color: #1e90ff;
+        border-radius: 4px;
+        border: 2px solid #fff;
+      }
+      .dark-mode .email-body::-webkit-scrollbar-thumb {
+        border-color: #2c2f33;
+        background-color: #87cefa;
+      }
+      .summary {
+        margin-top: 0.5rem;
+        line-height: 1.6;
+        color: #333;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #1e90ff #fff;
+      }
+      .dark-mode .summary {
+        color: #e0e0e0;
+        background: rgba(40, 44, 52, 0.5);
+        border-color: #4a4e57;
+        scrollbar-color: #87cefa #000;
+      }
+      .summary::-webkit-scrollbar {
+        width: 8px;
+      }
+      .summary::-webkit-scrollbar-track {
+        background: #fff;
+      }
+      .dark-mode .summary::-webkit-scrollbar-track {
+        background: #2c2f33;
+      }
+      .summary::-webkit-scrollbar-thumb {
+        background-color: #1e90ff;
+        border-radius: 4px;
+        border: 2px solid #fff;
+      }
+      .dark-mode .summary::-webkit-scrollbar-thumb {
+        border-color: #2c2f33;
+        background-color: #87cefa;
+      }
+      .show-full-email {
+        background: #1e90ff;
+        border: none;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 0.25rem;
+        width: auto;
+        transition: background 0.2s ease;
+      }
+      .dark-mode .show-full-email {
+        background: #1e90ff;
+      }
+      .show-full-email:hover {
+        background: #00ff7f;
+      }
+      .dark-mode .show-full-email:hover {
+        background: #00ff7f;
+      }
+      .output-container {
+        height: 250px;
+        overflow-y: auto;
+        position: relative;
+        padding: 0.5rem;
+        scrollbar-width: thin;
+        scrollbar-color: #1e90ff #fff;
+      }
+      .dark-mode .output-container {
+        scrollbar-color: #87cefa #000;
+      }
+      .output-container::-webkit-scrollbar {
+        width: 8px;
+      }
+      .output-container::-webkit-scrollbar-track {
+        background: #fff;
+      }
+      .dark-mode .output-container::-webkit-scrollbar-track {
+        background: #2c2f33;
+      }
+      .output-container::-webkit-scrollbar-thumb {
+        background-color: #1e90ff;
+        border-radius: 4px;
+        border: 2px solid #fff;
+      }
+      .dark-mode .output-container::-webkit-scrollbar-thumb {
+        border-color: #2c2f33;
+        background-color: #87cefa;
+      }
+      .output-container.processing::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 30px;
+        height: 30px;
+        border: 3px solid #1e90ff;
+        border-top: 3px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+      }
+      #output {
+        user-select: text;
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        line-height: 1.6;
+        color: #333;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+      }
+      .dark-mode #output {
+        color: #e0e0e0;
+      }
+      .copy-button {
+        position: sticky;
+        bottom: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0.25rem;
+        font-size: 0.9rem;
+        color: #1e90ff;
+        cursor: pointer;
+        transition: background 0.3s ease, color 0.3s ease;
+        z-index: 10;
+        margin-left: auto;
+        margin-right: 0;
+        display: block;
+      }
+      .dark-mode .copy-button {
+        border-color: #4a4e57;
+        color: #87cefa;
+      }
+      .copy-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #00ff7f;
+      }
+      .dark-mode .copy-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #00ff7f;
+      }
+      .input-container input {
+        width: 100%;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        color: #333;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+      }
+      .dark-mode .input-container input {
+        background: rgba(40, 44, 52, 0.7);
+        border-color: #4a4e57;
+        color: #e0e0e0;
+      }
+      .input-container input:focus {
+        border-color: #1e90ff;
+        outline: none;
+      }
+      .send-button {
+        background: #1e90ff;
+        border-radius: 0;
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        margin-top: 0.5rem;
+        width: 100%;
+        transition: background 0.2s ease;
+      }
+      .dark-mode .send-button {
+        background: #1e90ff;
+      }
+      .send-button:disabled {
+        background: rgba(255, 255, 255, 0.1);
+        cursor: not-allowed;
+      }
+      .dark-mode .send-button:disabled {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      .send-button:hover:not(:disabled) {
+        background: #00ff7f;
+      }
+      .dark-mode .send-button:hover:not(:disabled) {
+        background: #00ff7f;
+      }
+      .settings-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        min-width: 300px;
+        max-width: 90%;
+        z-index: 2000;
+        display: none;
+        font-family: "Inter", sans-serif;
+      }
+      .dark-mode .settings-modal {
+        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+      .settings-modal.active {
+        display: block;
+      }
+      .form-group {
+        margin-bottom: 0.75rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+      }
+      .dark-mode .form-group label {
+        color: #e0e0e0;
+      }
+      .form-group select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        background: #fff;
+        transition: border-color 0.3s ease;
+      }
+      .dark-mode .form-group select {
+        background: #2d2d2d;
+        border-color: #4a4e57;
+        color: #e0e0e0;
+      }
+      .form-group select:focus {
+        border-color: #1e90ff;
+        outline: none;
+      }
+      .error {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin: 0.5rem 0;
+        padding: 0.25rem;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 4px;
+        display: none;
+      }
+      .dark-mode .error {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.2);
+      }
+      .error.active {
+        display: block;
+      }
+      @keyframes spin {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <img src="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png" alt="MailAider Logo" class="logo">
-            <h1 class="main-heading">MailAider</h1>
-            <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
+      <div class="header">
+        <img
+          src="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png"
+          alt="MailAider Logo"
+          class="logo"
+        />
+        <h1 class="main-heading">MailAider</h1>
+        <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
+      </div>
+      <div class="error" id="error"></div>
+      <div class="email-viewer">
+        <div class="email-header">
+          <h2 id="emailSubject">Lade Betreff...</h2>
+          <p id="emailSender">Lade Absender...</p>
         </div>
-        <div class="error" id="error"></div>
-        <div class="email-viewer">
-            <div class="email-header">
-                <h2 id="emailSubject">Lade Betreff...</h2>
-                <p id="emailSender">Lade Absender...</p>
-            </div>
-            <div class="summary" id="emailSummary" style="display: none;">Lade Zusammenfassung...</div>
-            <button class="show-full-email" id="showFullEmailButton" onclick="showFullEmail()">Komplette Email anzeigen</button>
-            <div class="email-body" id="emailContent"></div>
+        <div class="summary" id="emailSummary" style="display: none">
+          Lade Zusammenfassung...
         </div>
-        <div class="output-container">
-            <div id="output">Warte auf Ausgabe...</div>
-            <button class="copy-button" onclick="copyOutputContent()">📋</button>
+        <div class="summary" id="emailSummary" style="display: none">
+          Lade Zusammenfassung...
         </div>
-        <div class="input-container">
-            <input id="promptInput" placeholder="Was soll verarbeitet werden? (optional)">
-            <button class="send-button" id="actionButton" onclick="openSettings()" disabled>Lade...</button>
+        <button
+          class="show-summary"
+          id="toggleSummaryButton"
+          onclick="toggleSummary()"
+        >
+          Zusammenfassung anzeigen
+        </button>
+      </div>
+      <div class="output-container">
+        <div id="output">Warte auf Ausgabe...</div>
+        <button class="copy-button" onclick="copyOutputContent()">📋</button>
+      </div>
+      <div class="input-container">
+        <input
+          id="promptInput"
+          placeholder="Was soll verarbeitet werden? (optional)"
+        />
+        <button
+          class="send-button"
+          id="actionButton"
+          onclick="openSettings()"
+          disabled
+        >
+          Lade...
+        </button>
+      </div>
+      <div class="action-buttons">
+        <button
+          class="action-button"
+          onclick="setAction('zusammenfassen')"
+          data-tooltip="Zusammenfassen"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+            />
+          </svg>
+        </button>
+        <button
+          class="action-button"
+          onclick="setAction('antworten')"
+          data-tooltip="Antworten"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+            />
+          </svg>
+        </button>
+        <button
+          class="action-button"
+          onclick="setAction('übersetzen')"
+          data-tooltip="Übersetzen"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"
+            />
+          </svg>
+        </button>
+        <button
+          class="action-button"
+          onclick="setAction('freierModus')"
+          data-tooltip="Freier Modus"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+            />
+          </svg>
+        </button>
+      </div>
+      <div class="settings-modal" id="settingsModal">
+        <div class="form-group" id="modeGroup">
+          <label>Verarbeitung:</label>
+          <select id="modeSelect" onchange="updateSettings()">
+            <option value="azure">⚡ Schnell (Azure)</option>
+            <option value="ollama">🔒 Datenschutz (Ollama)</option>
+          </select>
         </div>
-        <div class="action-buttons">
-            <button class="action-button" onclick="setAction('zusammenfassen')" data-tooltip="Zusammenfassen">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                </svg>
-            </button>
-            <button class="action-button" onclick="setAction('antworten')" data-tooltip="Antworten">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                </svg>
-            </button>
-            <button class="action-button" onclick="setAction('übersetzen')" data-tooltip="Übersetzen">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802" />
-                </svg>
-            </button>
-            <button class="action-button" onclick="setAction('freierModus')" data-tooltip="Freier Modus">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-            </button>
+        <div class="form-group" id="toneGroup" style="display: none">
+          <label>Tonfall:</label>
+          <select id="toneSelect">
+            <option value="formell">Formell</option>
+            <option value="informell">Informell</option>
+            <option value="höflich">Höflich</option>
+            <option value="direkt">Direkt & prägnant</option>
+          </select>
         </div>
-        <div class="settings-modal" id="settingsModal">
-            <div class="form-group" id="modeGroup">
-                <label>Verarbeitung:</label>
-                <select id="modeSelect" onchange="updateSettings()">
-                    <option value="azure">⚡ Schnell (Azure)</option>
-                    <option value="ollama">🔒 Datenschutz (Ollama)</option>
-                </select>
-            </div>
-            <div class="form-group" id="toneGroup" style="display: none;">
-                <label>Tonfall:</label>
-                <select id="toneSelect">
-                    <option value="formell">Formell</option>
-                    <option value="informell">Informell</option>
-                    <option value="höflich">Höflich</option>
-                    <option value="direkt">Direkt & prägnant</option>
-                </select>
-            </div>
-            <div class="form-group" id="greetingGroup" style="display: none;">
-                <label>Anrede:</label>
-                <select id="greetingSelect">
-                    <option value="informell">Du (informell)</option>
-                    <option value="formell">Sie (formell)</option>
-                </select>
-            </div>
-            <div class="form-group" id="lengthGroup" style="display: none;">
-                <label>Länge:</label>
-                <select id="lengthSelect">
-                    <option value="kurz">Kurz</option>
-                    <option value="mittel">Mittel</option>
-                    <option value="lang">Lang</option>
-                </select>
-            </div>
-            <div class="form-group" id="languageGroup" style="display: none;">
-                <label>Zielsprache:</label>
-                <select id="languageSelect">
-                    <option value="deutsch">Deutsch</option>
-                    <option value="englisch">Englisch</option>
-                    <option value="französisch">Französisch</option>
-                    <option value="italienisch">Italienisch</option>
-                </select>
-            </div>
-            <button class="send-button" id="submitModal" onclick="handleSubmitFromModal()">Ausführen</button>
-            <button class="send-button" onclick="closeSettings()">Schließen</button>
+        <div class="form-group" id="greetingGroup" style="display: none">
+          <label>Anrede:</label>
+          <select id="greetingSelect">
+            <option value="informell">Du (informell)</option>
+            <option value="formell">Sie (formell)</option>
+          </select>
         </div>
+        <div class="form-group" id="lengthGroup" style="display: none">
+          <label>Länge:</label>
+          <select id="lengthSelect">
+            <option value="kurz">Kurz</option>
+            <option value="mittel">Mittel</option>
+            <option value="lang">Lang</option>
+          </select>
+        </div>
+        <div class="form-group" id="languageGroup" style="display: none">
+          <label>Zielsprache:</label>
+          <select id="languageSelect">
+            <option value="deutsch">Deutsch</option>
+            <option value="englisch">Englisch</option>
+            <option value="französisch">Französisch</option>
+            <option value="italienisch">Italienisch</option>
+          </select>
+        </div>
+        <button
+          class="send-button"
+          id="submitModal"
+          onclick="handleSubmitFromModal()"
+        >
+          Ausführen
+        </button>
+        <button class="send-button" onclick="closeSettings()">Schließen</button>
+      </div>
     </div>
     <script>
-        const errorDiv = document.getElementById("error");
-        const actionButton = document.getElementById("actionButton");
-        const settingsModal = document.getElementById("settingsModal");
-        const emailContentDiv = document.getElementById("emailContent");
-        const emailSummaryDiv = document.getElementById("emailSummary");
-        const showFullEmailButton = document.getElementById("showFullEmailButton");
-        let emailContent = "";
-        let emailSubject = "";
-        let emailSender = "";
-        let mode = "azure";
-        let action = "antworten";
-        let tone = "formell";
-        let language = "deutsch";
-        let greeting = "informell";
-        let length = "kurz";
-        let isContentLoaded = false;
+      const errorDiv = document.getElementById("error");
+      const actionButton = document.getElementById("actionButton");
+      const settingsModal = document.getElementById("settingsModal");
+      const emailContentDiv = document.getElementById("emailContent");
+      const emailSummaryDiv = document.getElementById("emailSummary");
+      const showFullEmailButton = document.getElementById(
+        "showFullEmailButton"
+      );
+      let emailContent = "";
+      let emailSubject = "";
+      let emailSender = "";
+      let mode = "azure";
+      let action = "antworten";
+      let tone = "formell";
+      let language = "deutsch";
+      let greeting = "informell";
+      let length = "kurz";
+      let isContentLoaded = false;
 
-        function logError(message) {
-            console.error(message);
-            errorDiv.innerText = message;
-            errorDiv.classList.add("active");
+      function logError(message) {
+        console.error(message);
+        errorDiv.innerText = message;
+        errorDiv.classList.add("active");
+      }
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+      }
+
+      function openSettings() {
+        if (isContentLoaded) {
+          settingsModal.classList.add("active");
+          document.getElementById("modeSelect").value = mode;
+          updateSettings();
         }
+      }
 
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
+      function closeSettings() {
+        settingsModal.classList.remove("active");
+      }
+
+      function mapLanguage(lang) {
+        const languageMap = {
+          deutsch: "German",
+          englisch: "English",
+          französisch: "French",
+          italienisch: "Italian",
+        };
+        return languageMap[lang] || lang;
+      }
+
+      function setAction(newAction) {
+        action = newAction;
+        actionButton.textContent =
+          action === "zusammenfassen"
+            ? "Zusammenfassen"
+            : action === "antworten"
+            ? "Antworten"
+            : action === "übersetzen"
+            ? "Übersetzen"
+            : "Freier Modus";
+        if (isContentLoaded) actionButton.disabled = false;
+        updateSettings();
+      }
+
+      function updateSettings() {
+        mode = document.getElementById("modeSelect").value;
+        const toneGroup = document.getElementById("toneGroup");
+        const greetingGroup = document.getElementById("greetingGroup");
+        const lengthGroup = document.getElementById("lengthGroup");
+        const languageGroup = document.getElementById("languageGroup");
+
+        toneGroup.style.display = action === "antworten" ? "block" : "none";
+        greetingGroup.style.display = action === "antworten" ? "block" : "none";
+        lengthGroup.style.display = action === "antworten" ? "block" : "none";
+        languageGroup.style.display =
+          action === "übersetzen" ? "block" : "none";
+
+        if (action === "antworten") {
+          tone = document.getElementById("toneSelect").value;
+          greeting = document.getElementById("greetingSelect").value;
+          length = document.getElementById("lengthSelect").value;
+        } else if (action === "übersetzen") {
+          language = mapLanguage(
+            document.getElementById("languageSelect").value
+          );
+        } else if (action === "freierModus") {
+          toneGroup.style.display = "none";
+          greetingGroup.style.display = "none";
+          lengthGroup.style.display = "none";
+          languageGroup.style.display = "none";
         }
+      }
 
-        function openSettings() {
-            if (isContentLoaded) {
-                settingsModal.classList.add("active");
-                document.getElementById("modeSelect").value = mode;
-                updateSettings();
+      function showFullEmail() {
+        emailContentDiv.classList.add("active");
+        emailContentDiv.innerText = emailContent;
+        emailSummaryDiv.style.display = "none";
+        showFullEmailButton.style.display = "none";
+      }
+
+      function copyOutputContent() {
+        const outputElement = document.getElementById("output");
+        const text = outputElement.innerText;
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+        } catch (err) {
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+
+      async function callAzure(prompt) {
+        try {
+          const response = await fetch(
+            "https://khale-mamnr1a5-swedencentral.openai.azure.com/openai/deployments/gpt-4-e-mail-test/chat/completions?api-version=2024-04-01-preview",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "api-key":
+                  "2JnMa17NgJ1qv2lqHi1sxdEYORbpCn3FFfUySMsLq8hIr7naVLYtJQQJ99BEACfhMk5XJ3w3AAAAACOGTLFO",
+              },
+              body: JSON.stringify({
+                messages: [
+                  {
+                    role: "system",
+                    content:
+                      "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist.",
+                  },
+                  { role: "user", content: prompt },
+                ],
+                temperature: 0.5,
+              }),
             }
+          );
+          const data = await response.json();
+          return (
+            data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten."
+          );
+        } catch (error) {
+          return "❌ Fehler bei Azure: " + error.message;
+        }
+      }
+
+      async function callLokal(prompt) {
+        try {
+          const response = await fetch("http://localhost:11434/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "nous-hermes2",
+              messages: [
+                {
+                  role: "system",
+                  content:
+                    "Rolle: Du bist ein professioneller E-Mail-Assistent.",
+                },
+                { role: "user", content: prompt },
+              ],
+              stream: false,
+            }),
+          });
+          const data = await response.json();
+          return data.message?.content || "❌ Keine Antwort erhalten.";
+        } catch (error) {
+          return "❌ Fehler bei Lokal: " + error.message;
+        }
+      }
+
+      async function handleSubmitFromModal() {
+        const promptInput = document.getElementById("promptInput").value;
+        const outputDiv = document.getElementById("output");
+        const outputContainer = outputDiv.parentElement;
+        outputContainer.classList.add("processing");
+
+        if (!emailContent && !promptInput) {
+          outputDiv.innerText =
+            "❌ Kein E-Mail-Inhalt oder Benutzertext verfügbar.";
+          outputContainer.classList.remove("processing");
+          closeSettings();
+          return;
         }
 
-        function closeSettings() {
-            settingsModal.classList.remove("active");
+        const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
+        let fullPrompt = promptInput || "";
+        if (action === "zusammenfassen") {
+          fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
+        } else if (action === "antworten") {
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus, sofern nicht ausdrücklich anders angegeben. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel, sofern nicht ausdrücklich anders angegeben.:\n${emailText}${promptInput}`;
+        } else if (action === "übersetzen") {
+          fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
+            language
+          )}:\n${emailText}${promptInput}`;
+        } else if (action === "freierModus") {
+          fullPrompt = `${emailText}${promptInput}`;
         }
 
-        function mapLanguage(lang) {
-            const languageMap = {
-                "deutsch": "German",
-                "englisch": "English",
-                "französisch": "French",
-                "italienisch": "Italian"
-            };
-            return languageMap[lang] || lang;
+        closeSettings(); // hatte viele bugs
+        const apiCall = mode === "azure" ? callAzure : callLokal;
+        const response = await apiCall(fullPrompt);
+        outputDiv.innerText = response;
+        outputContainer.classList.remove("processing");
+      }
+
+      async function summarizeEmail() {
+        if (emailContent) {
+          const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
+          const response = await callAzure(fullPrompt);
+          emailSummaryDiv.innerText =
+            response || "Keine Zusammenfassung verfügbar.";
+        }
+      }
+
+      Office.onReady((info) => {
+        console.log(
+          "Office.js funktioniert host:",
+          info.host,
+          "platform:",
+          info.platform
+        );
+        if (!Office.context.mailbox || !Office.context.mailbox.item) {
+          logError(
+            "Kein E-Mail-Kontext verfügbar. Bitte eine E-Mail auswählen."
+          );
+          return;
         }
 
-        function setAction(newAction) {
-            action = newAction;
-            actionButton.textContent = action === "zusammenfassen" ? "Zusammenfassen" : action === "antworten" ? "Antworten" : action === "übersetzen" ? "Übersetzen" : "Freier Modus";
-            if (isContentLoaded) actionButton.disabled = false;
-            updateSettings();
-        }
+        const item = Office.context.mailbox.item;
+        const isOutlookWeb = info.platform === "OfficeOnline";
 
-        function updateSettings() {
-            mode = document.getElementById("modeSelect").value;
-            const toneGroup = document.getElementById("toneGroup");
-            const greetingGroup = document.getElementById("greetingGroup");
-            const lengthGroup = document.getElementById("lengthGroup");
-            const languageGroup = document.getElementById("languageGroup");
-
-            toneGroup.style.display = action === "antworten" ? "block" : "none";
-            greetingGroup.style.display = action === "antworten" ? "block" : "none";
-            lengthGroup.style.display = action === "antworten" ? "block" : "none";
-            languageGroup.style.display = action === "übersetzen" ? "block" : "none";
-
-            if (action === "antworten") {
-                tone = document.getElementById("toneSelect").value;
-                greeting = document.getElementById("greetingSelect").value;
-                length = document.getElementById("lengthSelect").value;
-            } else if (action === "übersetzen") {
-                language = mapLanguage(document.getElementById("languageSelect").value);
-            } else if (action === "freierModus") {
-                toneGroup.style.display = "none";
-                greetingGroup.style.display = "none";
-                lengthGroup.style.display = "none";
-                languageGroup.style.display = "none";
-            }
-        }
-
-        function showFullEmail() {
-            emailContentDiv.classList.add("active");
-            emailContentDiv.innerText = emailContent;
-            emailSummaryDiv.style.display = "none";
-            showFullEmailButton.style.display = "none";
-        }
-
-        function copyOutputContent() {
-            const outputElement = document.getElementById("output");
-            const text = outputElement.innerText;
-            const textarea = document.createElement("textarea");
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-            } catch (err) {
-            } finally {
-                document.body.removeChild(textarea);
-            }
-        }
-
-        async function callAzure(prompt) {
-            try {
-                const response = await fetch(
-                    "https://khale-mamnr1a5-swedencentral.openai.azure.com/openai/deployments/gpt-4-e-mail-test/chat/completions?api-version=2024-04-01-preview",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "api-key": "2JnMa17NgJ1qv2lqHi1sxdEYORbpCn3FFfUySMsLq8hIr7naVLYtJQQJ99BEACfhMk5XJ3w3AAAAACOGTLFO",
-                        },
-                        body: JSON.stringify({
-                            messages: [
-                                { role: "system", content: "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist." },
-                                { role: "user", content: prompt }
-                            ],
-                            temperature: 0.5
-                        })
-                    }
-                );
-                const data = await response.json();
-                return data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten.";
-            } catch (error) {
-                return "❌ Fehler bei Azure: " + error.message;
-            }
-        }
-
-        async function callLokal(prompt) {
-            try {
-                const response = await fetch("http://localhost:11434/api/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        model: "nous-hermes2",
-                        messages: [
-                            { role: "system", content: "Rolle: Du bist ein professioneller E-Mail-Assistent."},
-                            { role: "user", content: prompt }
-                        ],
-                        stream: false
-                    })
-                });
-                const data = await response.json();
-                return data.message?.content || "❌ Keine Antwort erhalten.";
-            } catch (error) {
-                return "❌ Fehler bei Lokal: " + error.message;
-            }
-        }
-
-        async function handleSubmitFromModal() {
-            const promptInput = document.getElementById("promptInput").value;
-            const outputDiv = document.getElementById("output");
-            const outputContainer = outputDiv.parentElement;
-            outputContainer.classList.add("processing");
-
-            if (!emailContent && !promptInput) {
-                outputDiv.innerText = "❌ Kein E-Mail-Inhalt oder Benutzertext verfügbar.";
-                outputContainer.classList.remove("processing");
-                closeSettings();
-                return;
-            }
-
-            const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
-            let fullPrompt = promptInput || "";
-            if (action === "zusammenfassen") {
-                fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
-            } else if (action === "antworten") {
-                fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus, sofern nicht ausdrücklich anders angegeben. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel, sofern nicht ausdrücklich anders angegeben.:\n${emailText}${promptInput}`;
-            } else if (action === "übersetzen") {
-                fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(language)}:\n${emailText}${promptInput}`;
-            } else if (action === "freierModus") {
-                fullPrompt = `${emailText}${promptInput}`;
-            }
-
-            closeSettings(); // hatte viele bugs
-            const apiCall = mode === "azure" ? callAzure : callLokal;
-            const response = await apiCall(fullPrompt);
-            outputDiv.innerText = response;
-            outputContainer.classList.remove("processing");
-        }
-
-        async function summarizeEmail() {
-            if (emailContent) {
-                const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
-                const response = await callAzure(fullPrompt);
-                emailSummaryDiv.innerText = response || "Keine Zusammenfassung verfügbar.";
-            }
-        }
-
-        Office.onReady((info) => {
-            console.log("Office.js funktioniert host:", info.host, "platform:", info.platform);
-            if (!Office.context.mailbox || !Office.context.mailbox.item) {
-                logError("Kein E-Mail-Kontext verfügbar. Bitte eine E-Mail auswählen.");
-                return;
-            }
-
-            const item = Office.context.mailbox.item;
-            const isOutlookWeb = info.platform === "OfficeOnline";
-
-            if (isOutlookWeb) {
-                emailSubject = item.subject || "Kein Betreff";
-                document.getElementById("emailSubject").innerText = emailSubject;
-                emailSender = (item.from && (item.from.displayName || item.from.emailAddress)) || "Unbekannter Absender";
-                document.getElementById("emailSender").innerText = "Von: " + emailSender;
+        if (isOutlookWeb) {
+          emailSubject = item.subject || "Kein Betreff";
+          document.getElementById("emailSubject").innerText = emailSubject;
+          emailSender =
+            (item.from && (item.from.displayName || item.from.emailAddress)) ||
+            "Unbekannter Absender";
+          document.getElementById("emailSender").innerText =
+            "Von: " + emailSender;
+        } else {
+          item.subject.getAsync((result) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailSubject = result.value || "Kein Betreff";
+              document.getElementById("emailSubject").innerText = emailSubject;
             } else {
-                item.subject.getAsync((result) => {
-                    if (result.status === Office.AsyncResultStatus.Succeeded) {
-                        emailSubject = result.value || "Kein Betreff";
-                        document.getElementById("emailSubject").innerText = emailSubject;
-                    } else {
-                        logError("Fehler beim Laden des Betreffs: " + result.error.message);
-                    }
-                });
-                item.from.getAsync((result) => {
-                    if (result.status === Office.AsyncResultStatus.Succeeded) {
-                        emailSender = result.value.displayName || result.value.emailAddress || "Unbekannter Absender";
-                        document.getElementById("emailSender").innerText = "Von: " + emailSender;
-                    } else {
-                        logError("Fehler beim Laden des Absenders: " + result.error.message);
-                    }
-                });
+              logError(
+                "Fehler beim Laden des Betreffs: " + result.error.message
+              );
             }
+          });
+          item.from.getAsync((result) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailSender =
+                result.value.displayName ||
+                result.value.emailAddress ||
+                "Unbekannter Absender";
+              document.getElementById("emailSender").innerText =
+                "Von: " + emailSender;
+            } else {
+              logError(
+                "Fehler beim Laden des Absenders: " + result.error.message
+              );
+            }
+          });
+        }
 
-            item.body.getAsync("text", (result) => {
-                if (result.status === Office.AsyncResultStatus.Succeeded) {
-                    emailContent = result.value || "Inhalt verfügbar";
-                    summarizeEmail().then(() => {
-                        isContentLoaded = true;
-                        actionButton.disabled = false;
-                        actionButton.textContent = action === "zusammenfassen" ? "Zusammenfassen" : action === "antworten" ? "Antwort formulieren" : action === "übersetzen" ? "Übersetzen" : "Freier Modus";
-                    });
-                } else {
-                    logError("Fehler: " + result.error.message);
-                }
+        item.body.getAsync("text", (result) => {
+          if (result.status === Office.AsyncResultStatus.Succeeded) {
+            emailContent = result.value || "Inhalt verfügbar";
+            summarizeEmail().then(() => {
+              isContentLoaded = true;
+              actionButton.disabled = false;
+              actionButton.textContent =
+                action === "zusammenfassen"
+                  ? "Zusammenfassen"
+                  : action === "antworten"
+                  ? "Antwort formulieren"
+                  : action === "übersetzen"
+                  ? "Übersetzen"
+                  : "Freier Modus";
             });
-        }).catch((error) => {
-            logError("Office.js Fehler: " + error.message);
+          } else {
+            logError("Fehler: " + result.error.message);
+          }
         });
+      }).catch((error) => {
+        logError("Office.js Fehler: " + error.message);
+      });
     </script>
+  </body>
+</html>
