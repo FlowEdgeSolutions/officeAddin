@@ -637,7 +637,7 @@
 
         function setAction(newAction) {
             action = newAction;
-            actionButton.textContent = action === "zusammenfassen" ? "Zusammenfassen" : action === "antworten" ? "Antwort formulieren" : action === "übersetzen" ? "Übersetzen" : "Freier Modus";
+            actionButton.textContent = action === "zusammenfassen" ? "Zusammenfassen" : action === "antworten" ? "Antworten" : action === "übersetzen" ? "Übersetzen" : "Freier Modus";
             if (isContentLoaded) actionButton.disabled = false;
             updateSettings();
         }
