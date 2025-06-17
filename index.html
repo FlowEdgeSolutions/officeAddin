@@ -505,6 +505,17 @@
           transform: translate(-50%, -50%) rotate(360deg);
         }
       }
+
+      .input-container input {
+        width: 100%;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        color: #333;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+      }
     </style>
   </head>
   <body>
@@ -540,11 +551,10 @@
         <button class="copy-button" onclick="copyOutputContent()">📋</button>
       </div>
       <div class="input-container">
-
         <textarea
-        id="promptInput"
-        placeholder="Was soll verarbeitet werden? (optional)"
-        rows="4"
+          id="promptInput"
+          placeholder="Was soll verarbeitet werden? (optional)"
+          rows="4"
         ></textarea>
 
         <button
