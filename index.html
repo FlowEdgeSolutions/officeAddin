@@ -524,19 +524,6 @@
           <h2 id="emailSubject">Lade Betreff...</h2>
           <p id="emailSender">Lade Absender...</p>
         </div>
-        <div class="summary" id="emailSummary" style="display: none">
-          Lade Zusammenfassung...
-        </div>
-        <div class="summary" id="emailSummary" style="display: none">
-          Lade Zusammenfassung...
-        </div>
-        <button
-          class="show-summary"
-          id="toggleSummaryButton"
-          onclick="toggleSummary()"
-        >
-          Zusammenfassung anzeigen
-        </button>
       </div>
       <div class="output-container">
         <div id="output">Warte auf Ausgabe...</div>
@@ -695,9 +682,7 @@
       const settingsModal = document.getElementById("settingsModal");
       const emailContentDiv = document.getElementById("emailContent");
       const emailSummaryDiv = document.getElementById("emailSummary");
-      const showFullEmailButton = document.getElementById(
-        "showFullEmailButton"
-      );
+
       let emailContent = "";
       let emailSubject = "";
       let emailSender = "";
@@ -747,7 +732,7 @@
           action === "zusammenfassen"
             ? "Zusammenfassen"
             : action === "antworten"
-            ? "Antworten"
+            ? "Antworten formulieren"
             : action === "übersetzen"
             ? "Übersetzen"
             : "Freier Modus";
@@ -784,11 +769,16 @@
         }
       }
 
-      function showFullEmail() {
-        emailContentDiv.classList.add("active");
-        emailContentDiv.innerText = emailContent;
-        emailSummaryDiv.style.display = "none";
-        showFullEmailButton.style.display = "none";
+      function toggleSummary() {
+        const summary = document.getElementById("emailSummary");
+        const btn = document.getElementById("toggleSummaryButton");
+        if (summary.style.display === "none") {
+          summary.style.display = "block";
+          btn.innerText = "Zusammenfassung verbergen";
+        } else {
+          summary.style.display = "none";
+          btn.innerText = "Zusammenfassung anzeigen";
+        }
       }
 
       function copyOutputContent() {
