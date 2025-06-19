@@ -87,6 +87,7 @@
         margin-right: 0.5rem;
       }
       .main-heading {
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
         font-size: 1.4rem;
         font-weight: 800;
         letter-spacing: -0.02em;
@@ -421,7 +422,7 @@
         background: #1e90ff;
       }
       .send-button:disabled {
-        background: rgba(255, 255, 255, 0.1);
+        /* background: rgba(255, 255, 255, 0.1); */
         cursor: not-allowed;
       }
       .dark-mode .send-button:disabled {
@@ -521,6 +522,27 @@
         font-size: 0.9rem;
         transition: border-color 0.3s ease;
       }
+
+      .prompt-input {
+        width: 100%;
+        box-sizing: border-box; 
+        resize: vertical;
+        height: 150px;
+        min-height: 100px;
+        padding: 5px;
+        font-family: "Inter", sans-serif;
+        color: black !important;
+        background-color: white;
+        border-radius: 5px;
+        border: 1px solid rgba(104, 104, 104, 0.645);
+      }
+      .prompt-input::placeholder {
+        color: rgba(0, 0, 0, 0.678);
+      }
+
+      .prompt-input:focus {
+        outline: 1px solid rgba(0, 0, 0, 0.702);
+      }
     </style>
   </head>
   <body>
@@ -566,6 +588,7 @@
       </div>
       <div class="input-container">
         <textarea
+          class="prompt-input"
           id="promptInput"
           placeholder="Was soll verarbeitet werden? (optional)"
           rows="4"
