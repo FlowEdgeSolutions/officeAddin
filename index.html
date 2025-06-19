@@ -531,7 +531,7 @@
           alt="MailAider Logo"
           class="logo"
         />
-        <h1 class="main-heading">MailAider</h1>
+        <h1 class="main-heading">MailAider AI</h1>
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
       </div>
       <div class="error" id="error"></div>
@@ -552,6 +552,15 @@
         </button>
       </div>
       <div class="output-container">
+        <dotlottie-player
+          id="lottieLoader"
+          src="https://lottie.host/c50dbde0-250a-43a1-8493-de801fb3caf5/zs2kPt4Uv9.lottie"
+          background="transparent"
+          speed="1"
+          style="width: 100px; height: 100px; margin: 0 auto; display: none"
+          loop
+          autoplay
+        ></dotlottie-player>
         <div id="output">Warte auf Ausgabe...</div>
         <button class="copy-button" onclick="copyOutputContent()">📋</button>
       </div>
@@ -710,6 +719,8 @@
       const settingsModal = document.getElementById("settingsModal");
       const emailContentDiv = document.getElementById("emailContent");
       const emailSummaryDiv = document.getElementById("emailSummary");
+      const lottieLoader = document.getElementById("lottieLoader");
+      lottieLoader.style.display = "block";
 
       let emailContent = "";
       let emailSubject = "";
@@ -827,13 +838,13 @@
       async function callAzure(prompt) {
         try {
           const response = await fetch(
-            "https://khale-mamnr1a5-swedencentral.openai.azure.com/openai/deployments/gpt-4-e-mail-test/chat/completions?api-version=2024-04-01-preview",
+            "https://openaiaddinapi.openai.azure.com/openai/deployments/gpt-4o_MailAiderAi_OutlookAddIn/chat/completions?api-version=2025-01-01-preview",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 "api-key":
-                  "2JnMa17NgJ1qv2lqHi1sxdEYORbpCn3FFfUySMsLq8hIr7naVLYtJQQJ99BEACfhMk5XJ3w3AAAAACOGTLFO",
+                  "9psvVslPXfp4xbJ9SzRXpfx9E9lP8TLiFcC3IZgf43RLNQA9RiV4JQQJ99BFACI8hq2XJ3w3AAABACOGHQcr",
               },
               body: JSON.stringify({
                 messages: [
@@ -844,7 +855,7 @@
                   },
                   { role: "user", content: prompt },
                 ],
-                temperature: 0.5,
+                temperature: 0.6,
               }),
             }
           );
@@ -868,7 +879,7 @@
                 {
                   role: "system",
                   content:
-                    "Rolle: Du bist ein professioneller E-Mail-Assistent.",
+                    "Rolle: Du bist ein professioneller E-Mail-Assistent. Nutze konsequent Schweizer Rechtschreibung. Bei Antworten beachte Tonalität, Anredeform und Textlänge gemäss Benutzervorgabe. Der Benutzertext hat Vorrang vor dem E-Mail-Inhalt.",
                 },
                 { role: "user", content: prompt },
               ],
@@ -901,7 +912,7 @@
         if (action === "zusammenfassen") {
           fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus, sofern nicht ausdrücklich anders angegeben. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel, sofern nicht ausdrücklich anders angegeben.:\n${emailText}${promptInput}`;
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
           fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
             language
@@ -914,6 +925,7 @@
         const apiCall = mode === "azure" ? callAzure : callLokal;
         const response = await apiCall(fullPrompt);
         outputDiv.innerText = response;
+        lottieLoader.style.display = "none";
         outputContainer.classList.remove("processing");
       }
 
