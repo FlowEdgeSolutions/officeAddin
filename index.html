@@ -914,6 +914,9 @@
         outputContainer.classList.add("processing");
         lottieLoader.style.display = "block";
 
+        outputDiv.innerText = "";
+        lottieLoader.style.display = "block";
+
         if (!emailContent && !promptInput) {
           outputDiv.innerText =
             "❌ Kein E-Mail-Inhalt oder Benutzertext verfügbar.";
