@@ -1,11 +1,13 @@
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>MailAider AI 3.0</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-    <script type="text/javascript" id="HOST" crossorigin="anonymous" src="https://appsforoffice.microsoft.com/lib/1/hosted/outlook-mac-16.00.js"></script>
-    <script type="text/javascript" id="OFFICESTRINGS" crossorigin="anonymous" src="https://appsforoffice.microsoft.com/lib/1/hosted/de-de/office_strings.js"></script>
-    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <script
+      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
+      type="module"
+    ></script>
 
     <style>
       * {
@@ -25,15 +27,9 @@
         margin: 0 auto;
         transition: background 0.3s;
       }
-      body.mac-platform {
-        background: #f5f5f7;
-      }
       .dark-mode {
         background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
         color: #e0e0e0;
-      }
-      .dark-mode.mac-platform {
-        background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
       }
       .dark-mode .container {
         background: rgba(44, 47, 51, 0.9);
@@ -418,6 +414,7 @@
         background: #1e90ff;
       }
       .send-button:disabled {
+        /* background: rgba(255, 255, 255, 0.1); */
         cursor: not-allowed;
       }
       .dark-mode .send-button:disabled {
@@ -539,12 +536,16 @@
         outline: 1px solid rgba(0, 0, 0, 0.702);
       }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
       <div class="header">
-        <img src="https://raw.githubusercontent.com/FlowEdgeSolutions/officeAddin/refs/heads/main/assets/logo80.png" alt="MailAider Logo" class="logo">
-        <h1 class="main-heading">MailAider AI 3.0</h1>
+        <img
+          src="https://raw.githubusercontent.com/FlowEdgeSolutions/officeAddin/refs/heads/main/assets/logo80.png"
+          alt="MailAider Logo"
+          class="logo"
+        />
+        <h1 class="main-heading">MailAider AI 4.0</h1>
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
       </div>
       <div class="error" id="error"></div>
@@ -556,40 +557,123 @@
         <div class="summary" id="emailSummary" style="display: none">
           Lade Zusammenfassung...
         </div>
-        <button class="send-button" id="toggleSummaryButton" onclick="toggleSummary()">
+        <button
+          class="send-button"
+          id="toggleSummaryButton"
+          onclick="toggleSummary()"
+        >
           Zusammenfassung anzeigen
         </button>
       </div>
       <div class="output-container">
-        <dotlottie-player id="lottieLoader" src="https://lottie.host/c50dbde0-250a-43a1-8493-de801fb3caf5/zs2kPt4Uv9.lottie" background="transparent" speed="1" style="width: 100px; height: 100px; margin: 0 auto; display: none" loop="" autoplay=""></dotlottie-player>
+        <dotlottie-player
+          id="lottieLoader"
+          src="https://lottie.host/c50dbde0-250a-43a1-8493-de801fb3caf5/zs2kPt4Uv9.lottie"
+          background="transparent"
+          speed="1"
+          style="width: 100px; height: 100px; margin: 0 auto; display: none"
+          loop
+          autoplay
+        ></dotlottie-player>
         <div id="output">Warte auf Ausgabe...</div>
         <button class="copy-button" onclick="copyOutputContent()">📋</button>
       </div>
       <div class="input-container">
-        <textarea class="prompt-input" id="promptInput" placeholder="Was soll verarbeitet werden? (optional)" rows="4"></textarea>
-        <button class="send-button" id="actionButton" onclick="openSettings()" disabled="">
+        <textarea
+          class="prompt-input"
+          id="promptInput"
+          placeholder="Was soll verarbeitet werden? (optional)"
+          rows="4"
+        ></textarea>
+
+        <button
+          class="send-button"
+          id="actionButton"
+          onclick="openSettings()"
+          disabled
+        >
           Lade...
         </button>
       </div>
       <div class="action-buttons">
-        <button class="action-button" onclick="setAction('zusammenfassen')" data-tooltip="Zusammenfassen">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"></path>
+        <button
+          class="action-button"
+          onclick="setAction('zusammenfassen')"
+          data-tooltip="Zusammenfassen"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+            />
           </svg>
         </button>
-        <button class="action-button" onclick="setAction('antworten')" data-tooltip="Antworten">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"></path>
+        <button
+          class="action-button"
+          onclick="setAction('antworten')"
+          data-tooltip="Antworten"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+            />
           </svg>
         </button>
-        <button class="action-button" onclick="setAction('übersetzen')" data-tooltip="Übersetzen">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"></path>
+        <button
+          class="action-button"
+          onclick="setAction('übersetzen')"
+          data-tooltip="Übersetzen"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"
+            />
           </svg>
         </button>
-        <button class="action-button" onclick="setAction('freierModus')" data-tooltip="Freier Modus">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"></path>
+        <button
+          class="action-button"
+          onclick="setAction('freierModus')"
+          data-tooltip="Freier Modus"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+            />
           </svg>
         </button>
       </div>
@@ -607,7 +691,7 @@
             <option value="formell">Formell</option>
             <option value="informell">Informell</option>
             <option value="höflich">Höflich</option>
-            <option value="direkt">Direkt &amp; prägnant</option>
+            <option value="direkt">Direkt & prägnant</option>
           </select>
         </div>
         <div class="form-group" id="greetingGroup" style="display: none">
@@ -634,177 +718,39 @@
             <option value="italienisch">Italienisch</option>
           </select>
         </div>
-        <button class="send-button" id="submitModal" onclick="handleSubmitFromModal()">
+        <button
+          class="send-button"
+          id="submitModal"
+          onclick="handleSubmitFromModal()"
+        >
           Ausführen
         </button>
         <button class="send-button" onclick="closeSettings()">Schließen</button>
       </div>
     </div>
-
     <script>
-      // Globale Variablen
       const errorDiv = document.getElementById("error");
       const actionButton = document.getElementById("actionButton");
+      const settingsModal = document.getElementById("settingsModal");
+      const emailContentDiv = document.getElementById("emailContent");
       const emailSummaryDiv = document.getElementById("emailSummary");
       const lottieLoader = document.getElementById("lottieLoader");
+
       let emailContent = "";
       let emailSubject = "";
       let emailSender = "";
-      let isContentLoaded = false;
-      let macTimeout;
       let mode = "azure";
       let action = "antworten";
       let tone = "formell";
       let language = "deutsch";
       let greeting = "informell";
       let length = "kurz";
+      let isContentLoaded = false;
 
-// Debugging-Hilfe
-console.log("MailAider wird initialisiert...");
-Office.onReady().then(info => {
-  console.log("Office.js bereit. Plattform:", info.platform, "Host:", info.host);
-  console.log("MailItem-Objekt:", Office.context.mailbox.item);
-}).catch(err => {
-  console.error("Office.onReady Fehler:", err);
-  document.getElementById("error").innerText = "Add-In konnte nicht starten: " + err.message;
-});
-
-      // Mac-Erkennung
-      if (navigator.platform.toUpperCase().includes('MAC')) {
-        document.body.classList.add('mac-platform');
-      }
-
-      // Initialisierung
-      Office.onReady((info) => {
-        console.log("MailAider wird geladen auf:", info.host, "Platform:", info.platform);
-        
-        if (!Office.context.mailbox || !Office.context.mailbox.item) {
-          showError("Bitte öffnen Sie eine E-Mail, um MailAider zu nutzen.");
-          return;
-        }
-
-        const item = Office.context.mailbox.item;
-        const isMac = info.platform === "Mac";
-
-        // Betreff laden
-        loadSubject(item, isMac);
-        
-        // Absender laden
-        loadSender(item, isMac);
-        
-        // E-Mail-Inhalt laden
-        loadEmailBody(item, isMac);
-
-      }).catch((error) => {
-        showError("Fehler beim Laden: " + error.message, false);
-      });
-
-      // Hilfsfunktionen
-      function loadSubject(item, isMac) {
-        if (isMac && item.subject) {
-          emailSubject = item.subject;
-          document.getElementById("emailSubject").innerText = emailSubject;
-        } else {
-          item.subject.getAsync((result) => {
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              emailSubject = result.value || "Kein Betreff";
-              document.getElementById("emailSubject").innerText = emailSubject;
-            }
-          });
-        }
-      }
-
-      function loadSender(item, isMac) {
-        if (isMac && item.from) {
-          emailSender = item.from.displayName || item.from.emailAddress || "Unbekannter Absender";
-          document.getElementById("emailSender").innerText = "Von: " + emailSender;
-        } else {
-          item.from.getAsync((result) => {
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              emailSender = result.value.displayName || result.value.emailAddress || "Unbekannter Absender";
-              document.getElementById("emailSender").innerText = "Von: " + emailSender;
-            }
-          });
-        }
-      }
-
-      function loadEmailBody(item, isMac) {
-        // Timeout für Mac setzen
-        macTimeout = setTimeout(() => {
-          if (!isContentLoaded) {
-            handleMacFallback(item);
-          }
-        }, 3000);
-
-        if (isMac) {
-          // Direkter Zugriff für Mac
-          try {
-            emailContent = item.body?.text || item.body || "";
-            if (emailContent) {
-              processEmailContent();
-            } else {
-              handleMacFallback(item);
-            }
-          } catch (e) {
-            handleMacFallback(item);
-          }
-        } else {
-          // Standard-Implementierung für andere Plattformen
-          item.body.getAsync("text", (result) => {
-            clearTimeout(macTimeout);
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              emailContent = result.value || "";
-              processEmailContent();
-            } else {
-              handleMacFallback(item);
-            }
-          });
-        }
-      }
-
-      function handleMacFallback(item) {
-        console.warn("Verwende Mac-Fallback-Methode");
-        try {
-          // Alternative Zugriffsmethoden für Mac
-          if (item.body && (item.body.text || item.body.getAsync)) {
-            if (typeof item.body.getAsync === 'function') {
-              item.body.getAsync("text", (result) => {
-                if (result.status === Office.AsyncResultStatus.Succeeded) {
-                  emailContent = result.value;
-                  processEmailContent();
-                } else {
-                  showError("E-Mail-Inhalt konnte nicht geladen werden (Mac Limitierung)");
-                }
-              });
-            } else {
-              emailContent = item.body.text || item.body || "";
-              processEmailContent();
-            }
-          } else {
-            showError("E-Mail-Inhalt auf Mac nicht verfügbar. Bitte Web-Version nutzen.");
-            isContentLoaded = true; // Freien Modus trotzdem erlauben
-          }
-        } catch (e) {
-          showError("Fehler beim Zugriff auf E-Mail-Inhalt: " + e.message);
-        }
-      }
-
-      function processEmailContent() {
-        clearTimeout(macTimeout);
-        summarizeEmail().finally(() => {
-          isContentLoaded = true;
-          actionButton.disabled = false;
-          actionButton.textContent = "Bereit";
-        });
-      }
-
-      function showError(message, showToUser = true) {
+      function logError(message) {
         console.error(message);
-        if (showToUser) {
-          errorDiv.innerText = message;
-          errorDiv.classList.add("active");
-          setTimeout(() => errorDiv.classList.remove("active"), 5000);
-        }
+        errorDiv.innerText = message;
+        errorDiv.classList.add("active");
       }
 
       function toggleDarkMode() {
@@ -839,7 +785,7 @@ Office.onReady().then(info => {
           action === "zusammenfassen"
             ? "Zusammenfassen"
             : action === "antworten"
-            ? "Antwort formulieren"
+            ? "Antworten formulieren"
             : action === "übersetzen"
             ? "Übersetzen"
             : "Freier Modus";
@@ -868,6 +814,11 @@ Office.onReady().then(info => {
           language = mapLanguage(
             document.getElementById("languageSelect").value
           );
+        } else if (action === "freierModus") {
+          toneGroup.style.display = "none";
+          greetingGroup.style.display = "none";
+          lengthGroup.style.display = "none";
+          languageGroup.style.display = "none";
         }
       }
 
@@ -988,7 +939,7 @@ Office.onReady().then(info => {
           fullPrompt = `${emailText}${promptInput}`;
         }
 
-        closeSettings();
+        closeSettings(); // hatte viele bugs
         const apiCall = mode === "azure" ? callAzure : callLokal;
         const response = await apiCall(fullPrompt);
         outputDiv.innerText = response;
@@ -1004,6 +955,81 @@ Office.onReady().then(info => {
             response || "Keine Zusammenfassung verfügbar.";
         }
       }
+
+      Office.onReady((info) => {
+        console.log(
+          "Office.js funktioniert host:",
+          info.host,
+          "platform:",
+          info.platform
+        );
+        if (!Office.context.mailbox || !Office.context.mailbox.item) {
+          logError(
+            "Kein E-Mail-Kontext verfügbar. Bitte eine E-Mail auswählen."
+          );
+          return;
+        }
+
+        const item = Office.context.mailbox.item;
+        const isOutlookWeb = info.platform === "OfficeOnline";
+
+        if (isOutlookWeb) {
+          emailSubject = item.subject || "Kein Betreff";
+          document.getElementById("emailSubject").innerText = emailSubject;
+          emailSender =
+            (item.from && (item.from.displayName || item.from.emailAddress)) ||
+            "Unbekannter Absender";
+          document.getElementById("emailSender").innerText =
+            "Von: " + emailSender;
+        } else {
+          item.subject.getAsync((result) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailSubject = result.value || "Kein Betreff";
+              document.getElementById("emailSubject").innerText = emailSubject;
+            } else {
+              logError(
+                "Fehler beim Laden des Betreffs: " + result.error.message
+              );
+            }
+          });
+          item.from.getAsync((result) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailSender =
+                result.value.displayName ||
+                result.value.emailAddress ||
+                "Unbekannter Absender";
+              document.getElementById("emailSender").innerText =
+                "Von: " + emailSender;
+            } else {
+              logError(
+                "Fehler beim Laden des Absenders: " + result.error.message
+              );
+            }
+          });
+        }
+
+        item.body.getAsync("text", (result) => {
+          if (result.status === Office.AsyncResultStatus.Succeeded) {
+            emailContent = result.value || "Inhalt verfügbar";
+            summarizeEmail().then(() => {
+              isContentLoaded = true;
+              actionButton.disabled = false;
+              actionButton.textContent =
+                action === "zusammenfassen"
+                  ? "Zusammenfassen"
+                  : action === "antworten"
+                  ? "Antwort formulieren"
+                  : action === "übersetzen"
+                  ? "Übersetzen"
+                  : "Freier Modus";
+            });
+          } else {
+            logError("Fehler: " + result.error.message);
+          }
+        });
+      }).catch((error) => {
+        logError("Office.js Fehler: " + error.message);
+      });
     </script>
-</body>
+  </body>
 </html>
