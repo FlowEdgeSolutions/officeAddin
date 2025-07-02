@@ -1,13 +1,11 @@
-<!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>MailAider</title>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-    <script
-      src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs"
-      type="module"
-    ></script>
+    <script type="text/javascript" id="HOST" crossorigin="anonymous" src="https://appsforoffice.microsoft.com/lib/1/hosted/outlook-mac-16.00.js"></script>
+    <script type="text/javascript" id="OFFICESTRINGS" crossorigin="anonymous" src="https://appsforoffice.microsoft.com/lib/1/hosted/de-de/office_strings.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 
     <style>
       * {
@@ -27,36 +25,15 @@
         margin: 0 auto;
         transition: background 0.3s;
       }
-      .dark-mode {
-        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
-        color: #e0e0e0;
-      }
-      .dark-mode .container {
-        background: rgba(44, 47, 51, 0.9);
-        border-color: #4a4e57;
-      }
-      
-<style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          Roboto, sans-serif;
-        line-height: 1.5;
-        font-weight: 400;
-        color: #333;
-        background: #fff;
-        padding: 0.25rem;
-        max-width: 350px;
-        margin: 0 auto;
-        transition: background 0.3s;
+      body.mac-platform {
+        background: #f5f5f7;
       }
       .dark-mode {
         background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
         color: #e0e0e0;
+      }
+      .dark-mode.mac-platform {
+        background: linear-gradient(135deg, #1e1e1e 0%, #121212 100%);
       }
       .dark-mode .container {
         background: rgba(44, 47, 51, 0.9);
@@ -441,7 +418,6 @@
         background: #1e90ff;
       }
       .send-button:disabled {
-        /* background: rgba(255, 255, 255, 0.1); */
         cursor: not-allowed;
       }
       .dark-mode .send-button:disabled {
@@ -562,36 +538,12 @@
       .prompt-input:focus {
         outline: 1px solid rgba(0, 0, 0, 0.702);
       }
-      /* ... existing styles ... */
-
-      /* Mac warning style */
-      .mac-warning {
-        background: #fff3cd;
-        color: #856404;
-        padding: 0.5rem;
-        border-radius: 4px;
-        margin-bottom: 1rem;
-        border-left: 3px solid #ffc107;
-        font-size: 0.9rem;
-      }
-      .dark-mode .mac-warning {
-        background: #343a40;
-        color: #ffc107;
-        border-left-color: #ffc107;
-      }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <!-- Mac-specific warning -->
-      <!-- will be inserted dynamically if on Mac -->
-
       <div class="header">
-        <img
-          src="https://raw.githubusercontent.com/FlowEdgeSolutions/officeAddin/main/assets/logo80.png"
-          alt="MailAider Logo"
-          class="logo"
-        />
+        <img src="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png" alt="MailAider Logo" class="logo">
         <h1 class="main-heading">MailAider AI</h1>
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
       </div>
@@ -604,195 +556,444 @@
         <div class="summary" id="emailSummary" style="display: none">
           Lade Zusammenfassung...
         </div>
-        <button
-          class="send-button"
-          id="toggleSummaryButton"
-          onclick="toggleSummary()"
-        >
+        <button class="send-button" id="toggleSummaryButton" onclick="toggleSummary()">
           Zusammenfassung anzeigen
         </button>
       </div>
       <div class="output-container">
-        <dotlottie-player
-          id="lottieLoader"
-          background="transparent"
-          speed="1"
-          style="width: 100px; height: 100px; margin: 0 auto; display: none"
-          loop
-          autoplay
-        ></dotlottie-player>
+        <dotlottie-player id="lottieLoader" src="https://lottie.host/c50dbde0-250a-43a1-8493-de801fb3caf5/zs2kPt4Uv9.lottie" background="transparent" speed="1" style="width: 100px; height: 100px; margin: 0 auto; display: none" loop="" autoplay=""></dotlottie-player>
         <div id="output">Warte auf Ausgabe...</div>
         <button class="copy-button" onclick="copyOutputContent()">📋</button>
       </div>
       <div class="input-container">
-        <textarea
-          class="prompt-input"
-          id="promptInput"
-          placeholder="Was soll verarbeitet werden? (optional)"
-          rows="4"
-        ></textarea>
-
-        <button
-          class="send-button"
-          id="actionButton"
-          onclick="openSettings()"
-          disabled
-        >
+        <textarea class="prompt-input" id="promptInput" placeholder="Was soll verarbeitet werden? (optional)" rows="4"></textarea>
+        <button class="send-button" id="actionButton" onclick="openSettings()" disabled="">
           Lade...
         </button>
       </div>
       <div class="action-buttons">
-        <!-- action buttons as before -->
+        <button class="action-button" onclick="setAction('zusammenfassen')" data-tooltip="Zusammenfassen">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"></path>
+          </svg>
+        </button>
+        <button class="action-button" onclick="setAction('antworten')" data-tooltip="Antworten">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"></path>
+          </svg>
+        </button>
+        <button class="action-button" onclick="setAction('übersetzen')" data-tooltip="Übersetzen">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m10.5 21 5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 0 1-3.827-5.802"></path>
+          </svg>
+        </button>
+        <button class="action-button" onclick="setAction('freierModus')" data-tooltip="Freier Modus">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"></path>
+          </svg>
+        </button>
       </div>
       <div class="settings-modal" id="settingsModal">
-        <!-- settings modal as before -->
+        <div class="form-group" id="modeGroup">
+          <label>Verarbeitung:</label>
+          <select id="modeSelect" onchange="updateSettings()">
+            <option value="azure">⚡ Schnell (Azure)</option>
+            <option value="ollama">🔒 Datenschutz (Ollama)</option>
+          </select>
+        </div>
+        <div class="form-group" id="toneGroup" style="display: none">
+          <label>Tonfall:</label>
+          <select id="toneSelect">
+            <option value="formell">Formell</option>
+            <option value="informell">Informell</option>
+            <option value="höflich">Höflich</option>
+            <option value="direkt">Direkt &amp; prägnant</option>
+          </select>
+        </div>
+        <div class="form-group" id="greetingGroup" style="display: none">
+          <label>Anrede:</label>
+          <select id="greetingSelect">
+            <option value="informell">Du (informell)</option>
+            <option value="formell">Sie (formell)</option>
+          </select>
+        </div>
+        <div class="form-group" id="lengthGroup" style="display: none">
+          <label>Länge:</label>
+          <select id="lengthSelect">
+            <option value="kurz">Kurz</option>
+            <option value="mittel">Mittel</option>
+            <option value="lang">Lang</option>
+          </select>
+        </div>
+        <div class="form-group" id="languageGroup" style="display: none">
+          <label>Zielsprache:</label>
+          <select id="languageSelect">
+            <option value="deutsch">Deutsch</option>
+            <option value="englisch">Englisch</option>
+            <option value="französisch">Französisch</option>
+            <option value="italienisch">Italienisch</option>
+          </select>
+        </div>
+        <button class="send-button" id="submitModal" onclick="handleSubmitFromModal()">
+          Ausführen
+        </button>
+        <button class="send-button" onclick="closeSettings()">Schließen</button>
       </div>
     </div>
 
     <script>
-      // Global state
+      // Globale Variablen
       const errorDiv = document.getElementById("error");
       const actionButton = document.getElementById("actionButton");
-      const settingsModal = document.getElementById("settingsModal");
       const emailSummaryDiv = document.getElementById("emailSummary");
       const lottieLoader = document.getElementById("lottieLoader");
-      const outputDiv = document.getElementById("output");
       let emailContent = "";
       let emailSubject = "";
       let emailSender = "";
+      let isContentLoaded = false;
+      let macTimeout;
       let mode = "azure";
       let action = "antworten";
       let tone = "formell";
-      let language = "German";
+      let language = "deutsch";
       let greeting = "informell";
       let length = "kurz";
-      let isContentLoaded = false;
 
-      const isMacOutlook = Office.context.mailbox.diagnostics.hostName === "OutlookMac";
+      // Mac-Erkennung
+      if (navigator.platform.toUpperCase().includes('MAC')) {
+        document.body.classList.add('mac-platform');
+      }
 
-      /**
-       * Safe method to get email body on all platforms
-       */
-      function getEmailBodySafe(callback) {
-        try {
-          Office.context.mailbox.item.body.getAsync("text", (result) => {
+      // Initialisierung
+      Office.onReady((info) => {
+        console.log("MailAider wird geladen auf:", info.host, "Platform:", info.platform);
+        
+        if (!Office.context.mailbox || !Office.context.mailbox.item) {
+          showError("Bitte öffnen Sie eine E-Mail, um MailAider zu nutzen.");
+          return;
+        }
+
+        const item = Office.context.mailbox.item;
+        const isMac = info.platform === "Mac";
+
+        // Betreff laden
+        loadSubject(item, isMac);
+        
+        // Absender laden
+        loadSender(item, isMac);
+        
+        // E-Mail-Inhalt laden
+        loadEmailBody(item, isMac);
+
+      }).catch((error) => {
+        showError("Fehler beim Laden: " + error.message, false);
+      });
+
+      // Hilfsfunktionen
+      function loadSubject(item, isMac) {
+        if (isMac && item.subject) {
+          emailSubject = item.subject;
+          document.getElementById("emailSubject").innerText = emailSubject;
+        } else {
+          item.subject.getAsync((result) => {
             if (result.status === Office.AsyncResultStatus.Succeeded) {
-              callback(result.value || "");
-            } else {
-              console.warn("Fallback (Mac): Leerer Body.");
-              callback("");
+              emailSubject = result.value || "Kein Betreff";
+              document.getElementById("emailSubject").innerText = emailSubject;
             }
           });
-        } catch (e) {
-          console.error("Mac getAsync Fehler:", e);
-          callback("");
         }
       }
 
-      /**
-       * Proxy API call to backend (hides sensitive keys)
-       */
-      async function callProxyAPI(prompt) {
+      function loadSender(item, isMac) {
+        if (isMac && item.from) {
+          emailSender = item.from.displayName || item.from.emailAddress || "Unbekannter Absender";
+          document.getElementById("emailSender").innerText = "Von: " + emailSender;
+        } else {
+          item.from.getAsync((result) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailSender = result.value.displayName || result.value.emailAddress || "Unbekannter Absender";
+              document.getElementById("emailSender").innerText = "Von: " + emailSender;
+            }
+          });
+        }
+      }
+
+      function loadEmailBody(item, isMac) {
+        // Timeout für Mac setzen
+        macTimeout = setTimeout(() => {
+          if (!isContentLoaded) {
+            handleMacFallback(item);
+          }
+        }, 3000);
+
+        if (isMac) {
+          // Direkter Zugriff für Mac
+          try {
+            emailContent = item.body?.text || item.body || "";
+            if (emailContent) {
+              processEmailContent();
+            } else {
+              handleMacFallback(item);
+            }
+          } catch (e) {
+            handleMacFallback(item);
+          }
+        } else {
+          // Standard-Implementierung für andere Plattformen
+          item.body.getAsync("text", (result) => {
+            clearTimeout(macTimeout);
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailContent = result.value || "";
+              processEmailContent();
+            } else {
+              handleMacFallback(item);
+            }
+          });
+        }
+      }
+
+      function handleMacFallback(item) {
+        console.warn("Verwende Mac-Fallback-Methode");
         try {
-          const response = await fetch("https://addins.flowedge.de/chatgpt-proxy", {
+          // Alternative Zugriffsmethoden für Mac
+          if (item.body && (item.body.text || item.body.getAsync)) {
+            if (typeof item.body.getAsync === 'function') {
+              item.body.getAsync("text", (result) => {
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                  emailContent = result.value;
+                  processEmailContent();
+                } else {
+                  showError("E-Mail-Inhalt konnte nicht geladen werden (Mac Limitierung)");
+                }
+              });
+            } else {
+              emailContent = item.body.text || item.body || "";
+              processEmailContent();
+            }
+          } else {
+            showError("E-Mail-Inhalt auf Mac nicht verfügbar. Bitte Web-Version nutzen.");
+            isContentLoaded = true; // Freien Modus trotzdem erlauben
+          }
+        } catch (e) {
+          showError("Fehler beim Zugriff auf E-Mail-Inhalt: " + e.message);
+        }
+      }
+
+      function processEmailContent() {
+        clearTimeout(macTimeout);
+        summarizeEmail().finally(() => {
+          isContentLoaded = true;
+          actionButton.disabled = false;
+          actionButton.textContent = "Bereit";
+        });
+      }
+
+      function showError(message, showToUser = true) {
+        console.error(message);
+        if (showToUser) {
+          errorDiv.innerText = message;
+          errorDiv.classList.add("active");
+          setTimeout(() => errorDiv.classList.remove("active"), 5000);
+        }
+      }
+
+      function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
+      }
+
+      function openSettings() {
+        if (isContentLoaded) {
+          settingsModal.classList.add("active");
+          document.getElementById("modeSelect").value = mode;
+          updateSettings();
+        }
+      }
+
+      function closeSettings() {
+        settingsModal.classList.remove("active");
+      }
+
+      function mapLanguage(lang) {
+        const languageMap = {
+          deutsch: "German",
+          englisch: "English",
+          französisch: "French",
+          italienisch: "Italian",
+        };
+        return languageMap[lang] || lang;
+      }
+
+      function setAction(newAction) {
+        action = newAction;
+        actionButton.textContent =
+          action === "zusammenfassen"
+            ? "Zusammenfassen"
+            : action === "antworten"
+            ? "Antwort formulieren"
+            : action === "übersetzen"
+            ? "Übersetzen"
+            : "Freier Modus";
+        if (isContentLoaded) actionButton.disabled = false;
+        updateSettings();
+      }
+
+      function updateSettings() {
+        mode = document.getElementById("modeSelect").value;
+        const toneGroup = document.getElementById("toneGroup");
+        const greetingGroup = document.getElementById("greetingGroup");
+        const lengthGroup = document.getElementById("lengthGroup");
+        const languageGroup = document.getElementById("languageGroup");
+
+        toneGroup.style.display = action === "antworten" ? "block" : "none";
+        greetingGroup.style.display = action === "antworten" ? "block" : "none";
+        lengthGroup.style.display = action === "antworten" ? "block" : "none";
+        languageGroup.style.display =
+          action === "übersetzen" ? "block" : "none";
+
+        if (action === "antworten") {
+          tone = document.getElementById("toneSelect").value;
+          greeting = document.getElementById("greetingSelect").value;
+          length = document.getElementById("lengthSelect").value;
+        } else if (action === "übersetzen") {
+          language = mapLanguage(
+            document.getElementById("languageSelect").value
+          );
+        }
+      }
+
+      function toggleSummary() {
+        const summary = document.getElementById("emailSummary");
+        const btn = document.getElementById("toggleSummaryButton");
+        if (summary.style.display === "none") {
+          summary.style.display = "block";
+          btn.innerText = "Zusammenfassung verbergen";
+        } else {
+          summary.style.display = "none";
+          btn.innerText = "Zusammenfassung anzeigen";
+        }
+      }
+
+      function copyOutputContent() {
+        const outputElement = document.getElementById("output");
+        const text = outputElement.innerText;
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+        } catch (err) {
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      }
+
+      async function callAzure(prompt) {
+        try {
+          const response = await fetch(
+            "https://openaiaddinapi.openai.azure.com/openai/deployments/gpt-4o_MailAiderAi_OutlookAddIn/chat/completions?api-version=2025-01-01-preview",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "api-key":
+                  "9psvVslPXfp4xbJ9SzRXpfx9E9lP8TLiFcC3IZgf43RLNQA9RiV4JQQJ99BFACI8hq2XJ3w3AAABACOGHQcr",
+              },
+              body: JSON.stringify({
+                messages: [
+                  {
+                    role: "system",
+                    content:
+                      "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist.",
+                  },
+                  { role: "user", content: prompt },
+                ],
+                temperature: 0.6,
+              }),
+            }
+          );
+          const data = await response.json();
+          return (
+            data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten."
+          );
+        } catch (error) {
+          return "❌ Fehler bei Azure: " + error.message;
+        }
+      }
+
+      async function callLokal(prompt) {
+        try {
+          const response = await fetch("http://localhost:11434/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({
+              model: "nous-hermes2",
+              messages: [
+                {
+                  role: "system",
+                  content:
+                    "Rolle: Du bist ein professioneller E-Mail-Assistent. Nutze konsequent Schweizer Rechtschreibung. Bei Antworten beachte Tonalität, Anredeform und Textlänge gemäss Benutzervorgabe. Der Benutzertext hat Vorrang vor dem E-Mail-Inhalt.",
+                },
+                { role: "user", content: prompt },
+              ],
+              stream: false,
+            }),
           });
-          if (!response.ok) throw new Error("Proxy-Fehler");
-          return await response.text();
+          const data = await response.json();
+          return data.message?.content || "❌ Keine Antwort erhalten.";
         } catch (error) {
-          console.error("Proxy-API-Fehler:", error);
-          return "❌ Fehler bei der Verarbeitung. Bitte später erneut versuchen.";
+          return "❌ Fehler bei Lokal: " + error.message;
         }
       }
 
-      /**
-       * Show Mac-specific warning
-       */
-      function showMacWarning() {
-        const warning = document.createElement("div");
-        warning.className = "mac-warning";
-        warning.innerHTML = `
-          <strong>Hinweis für Mac-Nutzer:</strong>
-          Einige Funktionen sind eingeschränkt. Die Verarbeitung erfolgt über einen sicheren Cloud-Proxy.
-        `;
-        document.querySelector(".container").prepend(warning);
-
-        const modeSelect = document.getElementById("modeSelect");
-        if (modeSelect) {
-          modeSelect.innerHTML = `<option value="azure">⚡ Schnell (Proxy)</option>`;
-        }
-      }
-
-      /**
-       * Handle submit from settings modal
-       */
       async function handleSubmitFromModal() {
         const promptInput = document.getElementById("promptInput").value;
+        const outputDiv = document.getElementById("output");
+        const outputContainer = outputDiv.parentElement;
+        outputContainer.classList.add("processing");
+        lottieLoader.style.display = "block";
+
         outputDiv.innerText = "";
         lottieLoader.style.display = "block";
 
         if (!emailContent && !promptInput) {
-          outputDiv.innerText = "❌ Kein Inhalt verfügbar";
-          lottieLoader.style.display = "none";
+          outputDiv.innerText =
+            "❌ Kein E-Mail-Inhalt oder Benutzertext verfügbar.";
+          outputContainer.classList.remove("processing");
+          closeSettings();
           return;
         }
 
-        // Build prompt
-        let fullPrompt = promptInput;
+        const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
+        let fullPrompt = promptInput || "";
         if (action === "zusammenfassen") {
-          fullPrompt = `Fasse diese E-Mail in Stichpunkten zusammen (● statt -):\n${emailContent}`;
+          fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = `Antworte auf diese E-Mail (${tone} Ton, ${greeting} Anrede, ${length}):\n${emailContent}`;
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
-          fullPrompt = `Übersetze ins ${language}:\n${emailContent}`;
+          fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
+            language
+          )}:\n${emailText}${promptInput}`;
+        } else if (action === "freierModus") {
+          fullPrompt = `${emailText}${promptInput}`;
         }
 
-        // Choose API method
-        const apiCall = callProxyAPI;
+        closeSettings();
+        const apiCall = mode === "azure" ? callAzure : callLokal;
         const response = await apiCall(fullPrompt);
         outputDiv.innerText = response;
         lottieLoader.style.display = "none";
-        settingsModal.classList.remove("active");
+        outputContainer.classList.remove("processing");
       }
 
-      /**
-       * Initialisation
-       */
-      Office.onReady(() => {
-        console.log("Office.js geladen auf Mac?", isMacOutlook);
-        if (isMacOutlook) showMacWarning();
-
-        if (!Office.context.mailbox?.item) {
-          return console.error("Keine E-Mail ausgewählt");
+      async function summarizeEmail() {
+        if (emailContent) {
+          const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
+          const response = await callAzure(fullPrompt);
+          emailSummaryDiv.innerText =
+            response || "Keine Zusammenfassung verfügbar.";
         }
-
-        const item = Office.context.mailbox.item;
-        document.getElementById("emailSubject").innerText = item.subject || "Kein Betreff";
-        document.getElementById("emailSender").innerText = "Von: " + (item.from?.displayName || item.from?.emailAddress || "Unbekannt");
-
-        // Load and summarize body
-        getEmailBodySafe((body) => {
-          emailContent = body;
-          if (isMacOutlook) {
-            callProxyAPI(`Fasse diese E-Mail in 4 Stichpunkten zusammen (● statt -):\n${body}`)
-              .then((summary) => {
-                emailSummaryDiv.innerText = summary;
-                emailSummaryDiv.style.display = "block";
-                actionButton.disabled = false;
-                actionButton.textContent = "Antwort formulieren";
-              });
-          } else {
-            // Existing Azure summary
-            summarizeEmail().then(() => {
-              emailSummaryDiv.style.display = "block";
-              actionButton.disabled = false;
-              actionButton.textContent = "Antwort formulieren";
-            });
-          }
-        });
-      });
+      }
     </script>
-  </body>
+</body>
 </html>
