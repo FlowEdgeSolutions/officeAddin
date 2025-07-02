@@ -659,6 +659,16 @@
       let greeting = "informell";
       let length = "kurz";
 
+// Debugging-Hilfe
+console.log("MailAider wird initialisiert...");
+Office.onReady().then(info => {
+  console.log("Office.js bereit. Plattform:", info.platform, "Host:", info.host);
+  console.log("MailItem-Objekt:", Office.context.mailbox.item);
+}).catch(err => {
+  console.error("Office.onReady Fehler:", err);
+  document.getElementById("error").innerText = "Add-In konnte nicht starten: " + err.message;
+});
+
       // Mac-Erkennung
       if (navigator.platform.toUpperCase().includes('MAC')) {
         document.body.classList.add('mac-platform');
