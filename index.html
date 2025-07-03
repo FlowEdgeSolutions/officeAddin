@@ -80,6 +80,7 @@
         text-align: center;
         display: flex;
         align-items: center;
+        justify-content: center;
       }
       .logo {
         width: 30px;
@@ -92,6 +93,7 @@
         font-weight: 800;
         letter-spacing: -0.02em;
         color: #1e90ff;
+        margin-right: 10px;
       }
       .dark-mode .main-heading {
         color: #87cefa;
@@ -107,6 +109,42 @@
       .dark-mode .dark-mode-toggle {
         color: #87cefa;
       }
+      
+      /* Verbesserte Lottie Animation Styles */
+      .lottie-container {
+        position: relative;
+        width: 60px;
+        height: 40px;
+        margin-left: 5px;
+      }
+      
+      #loadingLottie {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        display: none;
+      }
+      
+      #readyLottie {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        display: none;
+      }
+      
+      .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Rest der CSS-Stile bleiben gleich... */
       .action-buttons {
         display: flex;
         justify-content: space-between;
@@ -535,24 +573,6 @@
       .prompt-input:focus {
         outline: 1px solid rgba(0, 0, 0, 0.702);
       }
-
-      /* Lottie Animation Styles */
-      .lottie-container {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 40px;
-        height: 40px;
-      }
-      
-      #loadingLottie {
-        display: none;
-      }
-      
-      #readyLottie {
-        display: none;
-      }
     </style>
   </head>
   <script>
@@ -580,31 +600,33 @@ function hidePopup() {
 </div>
     <div class="container">
       <div class="header">
-        <img
-          src="https://raw.githubusercontent.com/FlowEdgeSolutions/officeAddin/refs/heads/main/assets/logo80.png"
-          alt="MailAider Logo"
-          class="logo"
-        />
-        <h1 class="main-heading">MailAider AI 4.0</h1>
-        <div class="lottie-container">
-          <dotlottie-player
-            id="loadingLottie"
-            src="https://lottie.host/ca615a42-7026-46ed-8ad3-5d1d3be3bee4/jRk8P0eZ6D.lottie"
-            background="transparent"
-            speed="1"
-            style="width: 40px; height: 40px"
-            loop
-            autoplay
-          ></dotlottie-player>
-          <dotlottie-player
-            id="readyLottie"
-            src="https://lottie.host/c92a8a5d-1a9b-4e79-968c-ccd370fdcbb3/K6ZUSuXQTS.lottie"
-            background="transparent"
-            speed="1"
-            style="width: 40px; height: 40px"
-            loop
-            autoplay
-          ></dotlottie-player>
+        <div class="header-content">
+          <img
+            src="https://raw.githubusercontent.com/FlowEdgeSolutions/officeAddin/refs/heads/main/assets/logo80.png"
+            alt="MailAider Logo"
+            class="logo"
+          />
+          <h1 class="main-heading">MailAider AI 4.0</h1>
+          <div class="lottie-container">
+            <dotlottie-player
+              id="loadingLottie"
+              src="https://lottie.host/ca615a42-7026-46ed-8ad3-5d1d3be3bee4/jRk8P0eZ6D.lottie"
+              background="transparent"
+              speed="1.5"
+              style="width: 40px; height: 40px"
+              loop
+              autoplay
+            ></dotlottie-player>
+            <dotlottie-player
+              id="readyLottie"
+              src="https://lottie.host/c92a8a5d-1a9b-4e79-968c-ccd370fdcbb3/K6ZUSuXQTS.lottie"
+              background="transparent"
+              speed="1"
+              style="width: 40px; height: 40px"
+              loop
+              autoplay
+            ></dotlottie-player>
+          </div>
         </div>
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
       </div>
