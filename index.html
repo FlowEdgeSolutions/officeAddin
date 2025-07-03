@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MailAider AI</title>
+    <title>MailAider AI 3.0</title>
     <meta charset="UTF-8" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script
@@ -124,6 +124,31 @@
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      /* Privacy Notice Styles */
+      .privacy-notice {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 12px;
+        margin: 8px auto;
+        width: fit-content;
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+      }
+      
+      .light-mode .privacy-notice {
+        background: rgba(0, 0, 0, 0.05);
+        color: #333;
+      }
+      
+      .privacy-lottie {
+        width: 16px !important;
+        height: 16px !important;
       }
 
       /* Rest der CSS-Stile... */
@@ -585,6 +610,20 @@ function hidePopup() {
         </div>
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">☀️</span>
       </div>
+      
+      <!-- Unternehmensdatenschutz Hinweis -->
+      <div class="privacy-notice">
+        <dotlottie-player
+          class="privacy-lottie"
+          src="https://lottie.host/315e81ec-fb44-44fe-a9c5-bf08ce9bc46b/dnLhElwMXh.lottie"
+          background="transparent"
+          speed="1"
+          loop
+          autoplay
+        ></dotlottie-player>
+        <span>Unternehmensdatenschutz gilt für diesen Chat</span>
+      </div>
+      
       <div class="error" id="error"></div>
       <div class="email-viewer">
         <div class="email-header">
@@ -790,6 +829,17 @@ function hidePopup() {
       document.body.classList.add("dark-mode");
       document.querySelector(".dark-mode-toggle").textContent = "☀️";
 
+      // Initialisiere Privacy Lottie basierend auf aktuellem Modus
+      function initPrivacyLottie() {
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        const privacyLottie = document.querySelector(".privacy-lottie");
+        if (privacyLottie) {
+          privacyLottie.src = isDarkMode 
+            ? "https://lottie.host/315e81ec-fb44-44fe-a9c5-bf08ce9bc46b/dnLhElwMXh.lottie"
+            : "https://lottie.host/ca615a42-7026-46ed-8ad3-5d1d3be3bee4/jRk8P0eZ6D.lottie";
+        }
+      }
+
       function logError(message) {
         console.error(message);
         errorDiv.innerText = message;
@@ -800,6 +850,14 @@ function hidePopup() {
         const isDarkMode = document.body.classList.toggle("dark-mode");
         document.body.classList.toggle("light-mode", !isDarkMode);
         document.querySelector(".dark-mode-toggle").textContent = isDarkMode ? "☀️" : "🌙";
+        
+        // Update Lottie animation based on theme
+        const privacyLottie = document.querySelector(".privacy-lottie");
+        if (privacyLottie) {
+          privacyLottie.src = isDarkMode 
+            ? "https://lottie.host/315e81ec-fb44-44fe-a9c5-bf08ce9bc46b/dnLhElwMXh.lottie"
+            : "https://lottie.host/ca615a42-7026-46ed-8ad3-5d1d3be3bee4/jRk8P0eZ6D.lottie";
+        }
       }
 
       function openSettings() {
@@ -991,7 +1049,7 @@ function hidePopup() {
         if (action === "zusammenfassen") {
           fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]`. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
           fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
             language
@@ -1032,6 +1090,7 @@ function hidePopup() {
         }
 
         loadingLottie.style.display = "block";
+        initPrivacyLottie();
 
         const item = Office.context.mailbox.item;
         const isOutlookWeb = info.platform === "OfficeOnline";
