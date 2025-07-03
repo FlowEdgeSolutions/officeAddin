@@ -20,8 +20,8 @@
           Roboto, sans-serif;
         line-height: 1.5;
         font-weight: 400;
-        color: #e0e0e0; /* Dunkelmodus Textfarbe standardmäßig */
-        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%); /* Dunkelmodus Hintergrund standardmäßig */
+        color: #e0e0e0;
+        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
         padding: 0.25rem;
         max-width: 350px;
         margin: 0 auto;
@@ -71,14 +71,6 @@
         padding: 0.5rem;
         border-bottom: 1px solid #4a4e57;
         text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .logo {
-        width: 50px;
-        height: auto;
-        margin-right: 0.5rem;
       }
       .dark-mode-toggle {
         position: absolute;
@@ -92,50 +84,16 @@
         color: #1e90ff;
       }
       
-      /* Lottie Animation Styles */
-      .lottie-container {
-        position: relative;
-        width: 60px;
-        height: 50px;
-        margin-left: 5px;
-      }
-      
-      #loadingLottie {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        width: 50px;
-        height: 50px;
-        display: none;
-      }
-      
-      #readyLottie {
-        position: absolute;
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
-        width: 50px;
-        height: 50px;
-        display: none;
-      }
-      
-      .header-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
       /* Privacy Notice Styles */
       .privacy-notice {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
-        padding: 6px 12px;
+        gap: 10px;
+        padding: 10px 15px;
         border-radius: 16px;
-        font-size: 12px;
-        margin: 8px auto;
+        font-size: 14px;
+        margin: 10px auto;
         width: fit-content;
         background: rgba(255, 255, 255, 0.1);
         color: #e0e0e0;
@@ -147,8 +105,8 @@
       }
       
       .privacy-lottie {
-        width: 16px !important;
-        height: 16px !important;
+        width: 24px !important;
+        height: 24px !important;
       }
 
       /* Rest der CSS-Stile... */
@@ -581,33 +539,6 @@ function hidePopup() {
 </div>
     <div class="container">
       <div class="header">
-        <div class="header-content">
-          <img
-            src="https://raw.githubusercontent.com/FlowEdgeSolutions/officeAddin/refs/heads/main/assets/logo80.png"
-            alt="MailAider Logo"
-            class="logo"
-          />
-          <div class="lottie-container">
-            <dotlottie-player
-              id="loadingLottie"
-              src="https://lottie.host/ca615a42-7026-46ed-8ad3-5d1d3be3bee4/jRk8P0eZ6D.lottie"
-              background="transparent"
-              speed="1.5"
-              style="width: 50px; height: 50px"
-              loop
-              autoplay
-            ></dotlottie-player>
-            <dotlottie-player
-              id="readyLottie"
-              src="https://lottie.host/315e81ec-fb44-44fe-a9c5-bf08ce9bc46b/dnLhElwMXh.lottie"
-              background="transparent"
-              speed="1"
-              style="width: 50px; height: 50px"
-              loop
-              autoplay
-            ></dotlottie-player>
-          </div>
-        </div>
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">☀️</span>
       </div>
       
@@ -621,7 +552,7 @@ function hidePopup() {
           loop
           autoplay
         ></dotlottie-player>
-        <span>Unternehmensdatenschutz gilt für diesen Chat</span>
+        <span>DSGVO SICHER</span>
       </div>
       
       <div class="error" id="error"></div>
@@ -811,8 +742,6 @@ function hidePopup() {
       const emailContentDiv = document.getElementById("emailContent");
       const emailSummaryDiv = document.getElementById("emailSummary");
       const lottieLoader = document.getElementById("lottieLoader");
-      const loadingLottie = document.getElementById("loadingLottie");
-      const readyLottie = document.getElementById("readyLottie");
 
       let emailContent = "";
       let emailSubject = "";
@@ -954,8 +883,7 @@ function hidePopup() {
 
       async function callAzure(prompt) {
         try {
-          loadingLottie.style.display = "block";
-          readyLottie.style.display = "none";
+          lottieLoader.style.display = "block";
           
           const response = await fetch(
             "https://openaiaddinapi.openai.azure.com/openai/deployments/gpt-4o_MailAiderAi_OutlookAddIn/chat/completions?api-version=2025-01-01-preview",
@@ -980,23 +908,20 @@ function hidePopup() {
             }
           );
           
-          loadingLottie.style.display = "none";
-          readyLottie.style.display = "block";
-          
           const data = await response.json();
           return (
             data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten."
           );
         } catch (error) {
-          loadingLottie.style.display = "none";
           return "❌ Fehler bei Azure: " + error.message;
+        } finally {
+          lottieLoader.style.display = "none";
         }
       }
 
       async function callLokal(prompt) {
         try {
-          loadingLottie.style.display = "block";
-          readyLottie.style.display = "none";
+          lottieLoader.style.display = "block";
           
           const response = await fetch("http://localhost:11434/api/chat", {
             method: "POST",
@@ -1015,14 +940,12 @@ function hidePopup() {
             }),
           });
           
-          loadingLottie.style.display = "none";
-          readyLottie.style.display = "block";
-          
           const data = await response.json();
           return data.message?.content || "❌ Keine Antwort erhalten.";
         } catch (error) {
-          loadingLottie.style.display = "none";
           return "❌ Fehler bei Lokal: " + error.message;
+        } finally {
+          lottieLoader.style.display = "none";
         }
       }
 
@@ -1031,7 +954,6 @@ function hidePopup() {
         const outputDiv = document.getElementById("output");
         const outputContainer = outputDiv.parentElement;
         outputContainer.classList.add("processing");
-        lottieLoader.style.display = "block";
 
         outputDiv.innerText = "";
         lottieLoader.style.display = "block";
@@ -1049,7 +971,7 @@ function hidePopup() {
         if (action === "zusammenfassen") {
           fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]`. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]`. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,". Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
           fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
             language
@@ -1058,11 +980,10 @@ function hidePopup() {
           fullPrompt = `${emailText}${promptInput}`;
         }
 
-        closeSettings(); // hatte viele bugs
+        closeSettings();
         const apiCall = mode === "azure" ? callAzure : callLokal;
         const response = await apiCall(fullPrompt);
         outputDiv.innerText = response;
-        lottieLoader.style.display = "none";
         outputContainer.classList.remove("processing");
       }
 
@@ -1089,7 +1010,6 @@ function hidePopup() {
           return;
         }
 
-        loadingLottie.style.display = "block";
         initPrivacyLottie();
 
         const item = Office.context.mailbox.item;
@@ -1144,17 +1064,12 @@ function hidePopup() {
                   : action === "übersetzen"
                   ? "Übersetzen"
                   : "Freier Modus";
-              
-              loadingLottie.style.display = "none";
-              readyLottie.style.display = "block";
             });
           } else {
-            loadingLottie.style.display = "none";
             logError("Fehler: " + result.error.message);
           }
         });
       }).catch((error) => {
-        loadingLottie.style.display = "none";
         logError("Office.js Fehler: " + error.message);
       });
     </script>
