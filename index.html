@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>MailAider AI 3.0</title>
+    <title>MailAider AI</title>
     <meta charset="UTF-8" />
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script
@@ -20,70 +20,63 @@
           Roboto, sans-serif;
         line-height: 1.5;
         font-weight: 400;
-        color: #333;
-        background: #fff;
+        color: #e0e0e0; /* Dunkelmodus Textfarbe standardmäßig */
+        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%); /* Dunkelmodus Hintergrund standardmäßig */
         padding: 0.25rem;
         max-width: 350px;
         margin: 0 auto;
         transition: background 0.3s;
       }
-      .dark-mode {
-        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
-        color: #e0e0e0;
+      .light-mode {
+        background: #fff;
+        color: #333;
       }
-      .dark-mode .container {
-        background: rgba(44, 47, 51, 0.9);
-        border-color: #4a4e57;
+      .light-mode .container {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: #ccc;
       }
-      .dark-mode .email-viewer,
-      .dark-mode .output-container,
-      .dark-mode .input-container {
-        background: rgba(34, 37, 41, 0.7);
-        border-color: #4a4e57;
+      .light-mode .email-viewer,
+      .light-mode .output-container,
+      .light-mode .input-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #ccc;
       }
-      .dark-mode .email-body,
-      .dark-mode .summary,
-      .dark-mode #output {
-        background: rgba(40, 44, 52, 0.5);
-        border-color: #4a4e57;
+      .light-mode .email-body,
+      .light-mode .summary,
+      .light-mode #output {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #ccc;
       }
-      .dark-mode .input-container input,
-      .dark-mode select {
-        background: rgba(40, 44, 52, 0.7);
-        border-color: #4a4e57;
-        color: #e0e0e0;
+      .light-mode .input-container input,
+      .light-mode select {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #ccc;
+        color: #333;
       }
-      .dark-mode .send-button {
+      .light-mode .send-button {
         background: #1e90ff;
       }
-      .dark-mode .send-button:hover:not(:disabled) {
-        background: #87cefa;
-      }
-      .dark-mode .copy-button {
+      .light-mode .copy-button {
         background: rgba(255, 255, 255, 0.1);
         color: #1e90ff;
       }
-      .dark-mode .copy-button:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: #87cefa;
-      }
       .container {
-        background: rgba(255, 255, 255, 0.8);
-        border: 1px solid #ccc;
+        background: rgba(44, 47, 51, 0.9);
+        border: 1px solid #4a4e57;
         border-radius: 8px;
         padding: 0.5rem;
       }
       .header {
         position: relative;
         padding: 0.5rem;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid #4a4e57;
         text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
       }
       .logo {
-        width: 50px; /* Vergrößert von 30px auf 50px */
+        width: 50px;
         height: auto;
         margin-right: 0.5rem;
       }
@@ -93,13 +86,13 @@
         right: 0.5rem;
         font-size: 1.2rem;
         cursor: pointer;
-        color: #1e90ff;
-      }
-      .dark-mode .dark-mode-toggle {
         color: #87cefa;
       }
+      .light-mode .dark-mode-toggle {
+        color: #1e90ff;
+      }
       
-      /* Verbesserte Lottie Animation Styles */
+      /* Lottie Animation Styles */
       .lottie-container {
         position: relative;
         width: 60px;
@@ -133,37 +126,37 @@
         justify-content: center;
       }
 
-      /* Rest der CSS-Stile bleiben gleich... */
+      /* Rest der CSS-Stile... */
       .action-buttons {
         display: flex;
         justify-content: space-between;
         margin: 0.5rem 0;
         padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-      }
-      .dark-mode .action-buttons {
         background: rgba(34, 37, 41, 0.7);
-        border-color: #4a4e57;
+        border: 1px solid #4a4e57;
+        border-radius: 8px;
         box-shadow: 0 3px 15px rgba(0, 240, 255, 0.1);
+      }
+      .light-mode .action-buttons {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #ccc;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
       }
       .action-button {
         background: none;
         border: none;
         padding: 0.5rem;
         font-size: 1.5rem;
-        color: #1e90ff;
+        color: #87cefa;
         cursor: pointer;
         transition: color 0.2s ease;
         flex: 1;
         text-align: center;
-        border-right: 1px solid #ccc;
+        border-right: 1px solid #4a4e57;
         position: relative;
       }
-      .dark-mode .action-button {
-        color: #87cefa;
+      .light-mode .action-button {
+        color: #1e90ff;
       }
       .action-button:hover {
         color: #00ff7f;
@@ -181,9 +174,6 @@
         font-size: 0.8rem;
         white-space: nowrap;
       }
-      .dark-mode .action-button:hover {
-        color: #00ff7f;
-      }
       .action-button:last-child {
         border-right: none;
       }
@@ -192,62 +182,62 @@
       .input-container {
         padding: 0.5rem;
         margin: 0.5rem 0;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-      }
-      .dark-mode .email-viewer,
-      .dark-mode .output-container,
-      .dark-mode .input-container {
         background: rgba(34, 37, 41, 0.7);
-        border-color: #4a4e57;
+        border-radius: 8px;
+        border: 1px solid #4a4e57;
         box-shadow: 0 3px 15px rgba(0, 240, 255, 0.1);
+      }
+      .light-mode .email-viewer,
+      .light-mode .output-container,
+      .light-mode .input-container {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #ccc;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
       }
       .email-header {
         padding-bottom: 0.5rem;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid #4a4e57;
       }
-      .dark-mode .email-header {
-        border-bottom-color: #4a4e57;
+      .light-mode .email-header {
+        border-bottom-color: #ccc;
       }
       .email-header h2 {
         font-weight: 700;
-        color: #333;
+        color: #e0e0e0;
         font-size: 1rem;
       }
-      .dark-mode .email-header h2 {
-        color: #e0e0e0;
+      .light-mode .email-header h2 {
+        color: #333;
       }
       .email-header p {
-        color: #666;
+        color: #a0a0a0;
         font-size: 0.85rem;
         margin: 0;
       }
-      .dark-mode .email-header p {
-        color: #a0a0a0;
+      .light-mode .email-header p {
+        color: #666;
       }
       .email-body {
         margin-top: 0.5rem;
         line-height: 1.6;
-        color: #333;
+        color: #e0e0e0;
         font-size: 0.85rem;
         white-space: pre-wrap;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(40, 44, 52, 0.5);
         padding: 0.5rem;
         border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid #4a4e57;
         height: 200px;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #1e90ff #fff;
+        scrollbar-color: #87cefa #000;
         display: none;
       }
-      .dark-mode .email-body {
-        color: #e0e0e0;
-        background: rgba(40, 44, 52, 0.5);
-        border-color: #4a4e57;
-        scrollbar-color: #87cefa #000;
+      .light-mode .email-body {
+        color: #333;
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #ccc;
+        scrollbar-color: #1e90ff #fff;
       }
       .email-body.active {
         display: block;
@@ -256,57 +246,57 @@
         width: 8px;
       }
       .email-body::-webkit-scrollbar-track {
-        background: #fff;
-      }
-      .dark-mode .email-body::-webkit-scrollbar-track {
         background: #2c2f33;
       }
-      .email-body::-webkit-scrollbar-thumb {
-        background-color: #1e90ff;
-        border-radius: 4px;
-        border: 2px solid #fff;
+      .light-mode .email-body::-webkit-scrollbar-track {
+        background: #fff;
       }
-      .dark-mode .email-body::-webkit-scrollbar-thumb {
-        border-color: #2c2f33;
+      .email-body::-webkit-scrollbar-thumb {
         background-color: #87cefa;
+        border-radius: 4px;
+        border: 2px solid #2c2f33;
+      }
+      .light-mode .email-body::-webkit-scrollbar-thumb {
+        border-color: #fff;
+        background-color: #1e90ff;
       }
       .summary {
         margin-top: 0.5rem;
         line-height: 1.6;
-        color: #333;
+        color: #e0e0e0;
         font-size: 0.85rem;
         white-space: pre-wrap;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(40, 44, 52, 0.5);
         padding: 0.5rem;
         border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid #4a4e57;
         overflow-y: auto;
         scrollbar-width: thin;
-        scrollbar-color: #1e90ff #fff;
-      }
-      .dark-mode .summary {
-        color: #e0e0e0;
-        background: rgba(40, 44, 52, 0.5);
-        border-color: #4a4e57;
         scrollbar-color: #87cefa #000;
+      }
+      .light-mode .summary {
+        color: #333;
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #ccc;
+        scrollbar-color: #1e90ff #fff;
       }
       .summary::-webkit-scrollbar {
         width: 8px;
       }
       .summary::-webkit-scrollbar-track {
-        background: #fff;
-      }
-      .dark-mode .summary::-webkit-scrollbar-track {
         background: #2c2f33;
       }
-      .summary::-webkit-scrollbar-thumb {
-        background-color: #1e90ff;
-        border-radius: 4px;
-        border: 2px solid #fff;
+      .light-mode .summary::-webkit-scrollbar-track {
+        background: #fff;
       }
-      .dark-mode .summary::-webkit-scrollbar-thumb {
-        border-color: #2c2f33;
+      .summary::-webkit-scrollbar-thumb {
         background-color: #87cefa;
+        border-radius: 4px;
+        border: 2px solid #2c2f33;
+      }
+      .light-mode .summary::-webkit-scrollbar-thumb {
+        border-color: #fff;
+        background-color: #1e90ff;
       }
       .show-full-email {
         background: #1e90ff;
@@ -320,13 +310,7 @@
         width: auto;
         transition: background 0.2s ease;
       }
-      .dark-mode .show-full-email {
-        background: #1e90ff;
-      }
       .show-full-email:hover {
-        background: #00ff7f;
-      }
-      .dark-mode .show-full-email:hover {
         background: #00ff7f;
       }
       .output-container {
@@ -335,28 +319,28 @@
         position: relative;
         padding: 0.5rem;
         scrollbar-width: thin;
-        scrollbar-color: #1e90ff #fff;
-      }
-      .dark-mode .output-container {
         scrollbar-color: #87cefa #000;
+      }
+      .light-mode .output-container {
+        scrollbar-color: #1e90ff #fff;
       }
       .output-container::-webkit-scrollbar {
         width: 8px;
       }
       .output-container::-webkit-scrollbar-track {
-        background: #fff;
-      }
-      .dark-mode .output-container::-webkit-scrollbar-track {
         background: #2c2f33;
       }
-      .output-container::-webkit-scrollbar-thumb {
-        background-color: #1e90ff;
-        border-radius: 4px;
-        border: 2px solid #fff;
+      .light-mode .output-container::-webkit-scrollbar-track {
+        background: #fff;
       }
-      .dark-mode .output-container::-webkit-scrollbar-thumb {
-        border-color: #2c2f33;
+      .output-container::-webkit-scrollbar-thumb {
         background-color: #87cefa;
+        border-radius: 4px;
+        border: 2px solid #2c2f33;
+      }
+      .light-mode .output-container::-webkit-scrollbar-thumb {
+        border-color: #fff;
+        background-color: #1e90ff;
       }
 
       #lottieLoader {
@@ -370,23 +354,23 @@
         -moz-user-select: text;
         -ms-user-select: text;
         line-height: 1.6;
-        color: #333;
+        color: #e0e0e0;
         font-size: 0.85rem;
         white-space: pre-wrap;
       }
-      .dark-mode #output {
-        color: #e0e0e0;
+      .light-mode #output {
+        color: #333;
       }
       .copy-button {
         position: sticky;
         bottom: 0.5rem;
         right: 0.5rem;
         background: rgba(255, 255, 255, 0.1);
-        border: 1px solid #ccc;
+        border: 1px solid #4a4e57;
         border-radius: 4px;
         padding: 0.25rem;
         font-size: 0.9rem;
-        color: #1e90ff;
+        color: #87cefa;
         cursor: pointer;
         transition: background 0.3s ease, color 0.3s ease;
         z-index: 10;
@@ -394,36 +378,35 @@
         margin-right: 0;
         display: block;
       }
-      .dark-mode .copy-button {
-        border-color: #4a4e57;
-        color: #87cefa;
+      .light-mode .copy-button {
+        border-color: #ccc;
+        color: #1e90ff;
       }
       .copy-button:hover {
-        background: rgba(255, 255, 255, 0.2);
-        color: #00ff7f;
-      }
-      .dark-mode .copy-button:hover {
         background: rgba(255, 255, 255, 0.2);
         color: #00ff7f;
       }
       .input-container input {
         width: 100%;
         padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid #ccc;
+        background: rgba(40, 44, 52, 0.7);
+        border: 1px solid #4a4e57;
         border-radius: 8px;
-        color: #333;
+        color: #e0e0e0;
         font-size: 0.9rem;
         transition: border-color 0.3s ease;
       }
-      .dark-mode .input-container input {
-        background: rgba(40, 44, 52, 0.7);
-        border-color: #4a4e57;
-        color: #e0e0e0;
+      .light-mode .input-container input {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #ccc;
+        color: #333;
       }
       .input-container input:focus {
-        border-color: #1e90ff;
+        border-color: #87cefa;
         outline: none;
+      }
+      .light-mode .input-container input:focus {
+        border-color: #1e90ff;
       }
       .send-button {
         background: #1e90ff;
@@ -437,20 +420,10 @@
         width: 100%;
         transition: background 0.2s ease;
       }
-      .dark-mode .send-button {
-        background: #1e90ff;
-      }
       .send-button:disabled {
-        /* background: rgba(255, 255, 255, 0.1); */
         cursor: not-allowed;
       }
-      .dark-mode .send-button:disabled {
-        background: rgba(0, 0, 0, 0.3);
-      }
       .send-button:hover:not(:disabled) {
-        background: #00ff7f;
-      }
-      .dark-mode .send-button:hover:not(:disabled) {
         background: #00ff7f;
       }
       .settings-modal {
@@ -458,9 +431,9 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: #fff;
+        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         padding: 1.5rem;
         min-width: 300px;
         max-width: 90%;
@@ -468,9 +441,9 @@
         display: none;
         font-family: "Inter", sans-serif;
       }
-      .dark-mode .settings-modal {
-        background: linear-gradient(135deg, #2c2f33 0%, #1a1d23 100%);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      .light-mode .settings-modal {
+        background: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
       .settings-modal.active {
         display: block;
@@ -482,64 +455,48 @@
         display: block;
         margin-bottom: 0.25rem;
         font-weight: 600;
-        color: #333;
+        color: #e0e0e0;
         font-size: 0.9rem;
       }
-      .dark-mode .form-group label {
-        color: #e0e0e0;
+      .light-mode .form-group label {
+        color: #333;
       }
       .form-group select {
         width: 100%;
         padding: 0.5rem;
-        border: 2px solid #ccc;
+        border: 2px solid #4a4e57;
         border-radius: 6px;
         font-size: 0.9rem;
-        background: #fff;
+        background: #2d2d2d;
+        color: #e0e0e0;
         transition: border-color 0.3s ease;
       }
-      .dark-mode .form-group select {
-        background: #2d2d2d;
-        border-color: #4a4e57;
-        color: #e0e0e0;
+      .light-mode .form-group select {
+        background: #fff;
+        border-color: #ccc;
+        color: #333;
       }
       .form-group select:focus {
-        border-color: #1e90ff;
+        border-color: #87cefa;
         outline: none;
+      }
+      .light-mode .form-group select:focus {
+        border-color: #1e90ff;
       }
       .error {
         color: #ff6b6b;
         font-size: 0.85rem;
         margin: 0.5rem 0;
         padding: 0.25rem;
-        background: rgba(255, 107, 107, 0.1);
+        background: rgba(255, 107, 107, 0.2);
         border-radius: 4px;
         display: none;
       }
-      .dark-mode .error {
-        color: #ff6b6b;
-        background: rgba(255, 107, 107, 0.2);
+      .light-mode .error {
+        background: rgba(255, 107, 107, 0.1);
       }
       .error.active {
         display: block;
-      }
-      @keyframes spin {
-        0% {
-          transform: translate(-50%, -50%) rotate(0deg);
-        }
-        100% {
-          transform: translate(-50%, -50%) rotate(360deg);
-        }
-      }
-
-      .input-container input {
-        width: 100%;
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        color: #333;
-        font-size: 0.9rem;
-        transition: border-color 0.3s ease;
       }
 
       .prompt-input {
@@ -550,16 +507,26 @@
         min-height: 100px;
         padding: 5px;
         font-family: "Inter", sans-serif;
+        color: #e0e0e0 !important;
+        background-color: #2d2d2d;
+        border-radius: 5px;
+        border: 1px solid #4a4e57;
+      }
+      .light-mode .prompt-input {
         color: black !important;
         background-color: white;
-        border-radius: 5px;
-        border: 1px solid rgba(104, 104, 104, 0.645);
+        border-color: rgba(104, 104, 104, 0.645);
       }
       .prompt-input::placeholder {
+        color: rgba(224, 224, 224, 0.7);
+      }
+      .light-mode .prompt-input::placeholder {
         color: rgba(0, 0, 0, 0.678);
       }
-
       .prompt-input:focus {
+        outline: 1px solid #87cefa;
+      }
+      .light-mode .prompt-input:focus {
         outline: 1px solid rgba(0, 0, 0, 0.702);
       }
     </style>
@@ -607,7 +574,7 @@ function hidePopup() {
             ></dotlottie-player>
             <dotlottie-player
               id="readyLottie"
-              src="https://lottie.host/c92a8a5d-1a9b-4e79-968c-ccd370fdcbb3/K6ZUSuXQTS.lottie"
+              src="https://lottie.host/315e81ec-fb44-44fe-a9c5-bf08ce9bc46b/dnLhElwMXh.lottie"
               background="transparent"
               speed="1"
               style="width: 50px; height: 50px"
@@ -616,7 +583,7 @@ function hidePopup() {
             ></dotlottie-player>
           </div>
         </div>
-        <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
+        <span class="dark-mode-toggle" onclick="toggleDarkMode()">☀️</span>
       </div>
       <div class="error" id="error"></div>
       <div class="email-viewer">
@@ -819,6 +786,10 @@ function hidePopup() {
       let length = "kurz";
       let isContentLoaded = false;
 
+      // Standardmäßig Dunkelmodus aktivieren
+      document.body.classList.add("dark-mode");
+      document.querySelector(".dark-mode-toggle").textContent = "☀️";
+
       function logError(message) {
         console.error(message);
         errorDiv.innerText = message;
@@ -826,7 +797,9 @@ function hidePopup() {
       }
 
       function toggleDarkMode() {
-        document.body.classList.toggle("dark-mode");
+        const isDarkMode = document.body.classList.toggle("dark-mode");
+        document.body.classList.toggle("light-mode", !isDarkMode);
+        document.querySelector(".dark-mode-toggle").textContent = isDarkMode ? "☀️" : "🌙";
       }
 
       function openSettings() {
