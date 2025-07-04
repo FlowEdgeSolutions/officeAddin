@@ -976,20 +976,20 @@ function hidePopup() {
           document.getElementById("emailSender").innerText =
             "Von: " + emailSender;
         
-          item.from.getAsync((result) => {
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              emailSender =
-                result.value.displayName ||
-                result.value.emailAddress ||
-                "Unbekannter Absender";
-              document.getElementById("emailSender").innerText =
-                "Von: " + emailSender;
-            } else {
-              logError(
-                "Fehler beim Laden des Absenders: " + result.error.message
-              );
-            }
-          });
+          // item.from.getAsync((result) => { this is for compose mode
+          //   if (result.status === Office.AsyncResultStatus.Succeeded) {
+          //     emailSender =
+          //       result.value.displayName ||
+          //       result.value.emailAddress ||
+          //       "Unbekannter Absender";
+          //     document.getElementById("emailSender").innerText =
+          //       "Von: " + emailSender;
+          //   } else {
+          //     logError(
+          //       "Fehler beim Laden des Absenders: " + result.error.message
+          //     );
+          //   }
+          // });
 
         item.body.getAsync("text", (result) => {
           if (result.status === Office.AsyncResultStatus.Succeeded) {
