@@ -1,112 +1,95 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<OfficeApp
-  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
-  xsi:type="MailApp">
-
-  <!-- Grundkonfiguration -->
-  <Id>ea57ad30-ee3c-4218-932e-3c9ee145ff4b</Id>
+  xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
+  <Id>076b8bbf-dd64-46a1-b45a-f5754b6c7cdf</Id>
   <Version>1.0.0.3</Version>
   <ProviderName>MailAider</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="MailAider AI for Kreston AG" />
-  <Description
-    DefaultValue="Ein Outlook-Add-in mit dem Ziel, E-Mails mithilfe eines intelligenten KI-Assistenten zu analysieren, bearbeiten oder automatisch zu beantworten." />
-  <IconUrl DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png" />
-  <HighResolutionIconUrl
-    DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png" />
-  <SupportUrl DefaultValue="https://mailaider.com/support" />
-
-  <!-- Domänen und Hosts -->
+  <DisplayName DefaultValue="MailAider AI FLE"/>
+  <Description DefaultValue="Ein Outlook-Add-in mit dem Ziel, E-Mails mithilfe eines intelligenten KI-Assistenten zu analysieren, bearbeiten oder automatisch zu beantworten."/>
+  <IconUrl DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png"/>
+  <HighResolutionIconUrl DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png"/>
+  <SupportUrl DefaultValue="https://ubisoft.rip/support"/>
   <AppDomains>
     <AppDomain>https://addins.flowedge.de</AppDomain>
   </AppDomains>
   <Hosts>
-    <Host Name="Mailbox" />
+    <Host Name="Mailbox"/>
   </Hosts>
-
-  <!-- Anforderungen -->
   <Requirements>
     <Sets>
-      <Set Name="Mailbox" MinVersion="1.1" />
+      <Set Name="Mailbox" MinVersion="1.1"/>
     </Sets>
   </Requirements>
-
-  <!-- Formulareinstellungen -->
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://addins.flowedge.de/index.html" />
+        <SourceLocation DefaultValue="https://addins.flowedge.de/index.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
   </FormSettings>
-
-  <Permissions>ReadWriteMailbox</Permissions>
-
-  <!-- Regeln -->
+  <Permissions>ReadWriteItem</Permissions>
   <Rule xsi:type="RuleCollection" Mode="Or">
-    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read" />
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>
-
-  <!-- VersionOverrides für moderne Funktionen -->
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
-    xsi:type="VersionOverridesV1_0">
-    <Hosts>
-      <Host xsi:type="MailHost">
-        <DesktopFormFactor>
-          <FunctionFile resid="functionFile" />
-          <ExtensionPoint xsi:type="MessageReadCommandSurface">
-            <OfficeTab id="TabDefault">
-              <Group id="msgReadGroup">
-                <Label resid="groupLabel" />
-                <Control xsi:type="Button" id="msgReadOpenPaneButton">
-                  <Label resid="paneButtonLabel" />
-                  <Supertip>
-                    <Title resid="paneButtonTitle" />
-                    <Description resid="paneButtonDesc" />
-                  </Supertip>
-                  <Icon>
-                    <bt:Image size="16" resid="icon16" />
-                    <bt:Image size="32" resid="icon32" />
-                    <bt:Image size="80" resid="icon80" />
-                  </Icon>
-                  <Action xsi:type="ShowTaskpane">
-                    <SourceLocation resid="taskPaneUrl" />
-                  </Action>
-                </Control>
-              </Group>
-            </OfficeTab>
-          </ExtensionPoint>
-        </DesktopFormFactor>
-      </Host>
-    </Hosts>
-
-    <!-- Ressourcen -->
-    <Resources>
-      <bt:Images>
-        <bt:Image id="icon16"
-          DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/logo16.png" />
-        <bt:Image id="icon32"
-          DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/logo32.png" />
-        <bt:Image id="icon80"
-          DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png" />
-      </bt:Images>
-      <bt:Urls>
-        <bt:Url id="functionFile"
-          DefaultValue="https://orange-dune-0a75eea0f.6.azurestaticapps.net/function.html" />
-        <bt:Url id="taskPaneUrl"
-          DefaultValue="https://addins.flowedge.de/index.html" />
-      </bt:Urls>
-      <bt:ShortStrings>
-        <bt:String id="groupLabel" DefaultValue="MailAider Add-In" />
-        <bt:String id="paneButtonLabel" DefaultValue="MailAider" />
-        <bt:String id="paneButtonTitle" DefaultValue="MailAider" />
-      </bt:ShortStrings>
-      <bt:LongStrings>
-        <bt:String id="paneButtonDesc" DefaultValue="MailAider Add-In" />
-      </bt:LongStrings>
-    </Resources>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.3">
+          <bt:Set Name="Mailbox"/>
+        </bt:Sets>
+      </Requirements>
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="Commands.Url"/>
+            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="msgComposeGroup">
+                  <Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="msgComposeOpenPaneButton">
+                    <Label resid="TaskpaneButton.Label"/>
+                    <Supertip>
+                      <Title resid="TaskpaneButton.Title"/>
+                      <Description resid="TaskpaneButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16x16"/>
+                      <bt:Image size="32" resid="Icon.32x32"/>
+                      <bt:Image size="80" resid="Icon.80x80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Taskpane.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16x16" DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/logo16.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/logo32.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://mailaiderassets.blob.core.windows.net/logos/maillogo80.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="Commands.Url" DefaultValue="https://orange-dune-0a75eea0f.6.azurestaticapps.net/function.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://addins.flowedge.de/index.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="MailAider Add-In"/>
+          <bt:String id="TaskpaneButton.Title" DefaultValue="MailAider"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="MailAider"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="TaskpaneButton.Tooltip" DefaultValue="MailAider Add-In"/>
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
   </VersionOverrides>
 </OfficeApp>
