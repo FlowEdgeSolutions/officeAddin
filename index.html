@@ -660,6 +660,15 @@ function hidePopup() {
         </button>
         <button
           class="action-button"
+          onclick="setAction('direkteAntwort')"
+          data-tooltip="Direkte Antwort"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+          </svg>
+        </button>
+        <button
+          class="action-button"
           onclick="setAction('übersetzen')"
           data-tooltip="Übersetzen"
         >
@@ -810,6 +819,8 @@ function hidePopup() {
             ? "Antworten formulieren"
             : action === "übersetzen"
             ? "Übersetzen"
+            : action === "direkteAntwort"
+            ? "Direkte Antwort einfügen"
             : "Freier Modus";
         if (isContentLoaded) actionButton.disabled = false;
         updateSettings();
@@ -821,6 +832,15 @@ function hidePopup() {
         const greetingGroup = document.getElementById("greetingGroup");
         const lengthGroup = document.getElementById("lengthGroup");
         const languageGroup = document.getElementById("languageGroup");
+
+        // Verstecke alle Einstellungsgruppen für direkte Antwort
+        if (action === "direkteAntwort") {
+          toneGroup.style.display = "none";
+          greetingGroup.style.display = "none";
+          lengthGroup.style.display = "none";
+          languageGroup.style.display = "none";
+          return;
+        }
 
         toneGroup.style.display = action === "antworten" ? "block" : "none";
         greetingGroup.style.display = action === "antworten" ? "block" : "none";
@@ -841,6 +861,28 @@ function hidePopup() {
           greetingGroup.style.display = "none";
           lengthGroup.style.display = "none";
           languageGroup.style.display = "none";
+        }
+      }
+
+      async function insertDirectReply() {
+        try {
+          const promptInput = document.getElementById("promptInput").value;
+          const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
+          const fullPrompt = `Formuliere eine direkte Antwort auf die folgende E-Mail im formellen Ton mit "Sie" Anrede (mittel) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Verzichte auf eine Grussformel am Ende:\n${emailText}${promptInput}`;
+
+          showPopup("Generiere Antwort...");
+
+          const apiCall = mode === "azure" ? callAzure : callLokal;
+          const generatedReply = await apiCall(fullPrompt);
+
+          // Direkt in das Antwortformular einfügen
+          Office.context.mailbox.item.displayReplyForm(generatedReply);
+          
+          hidePopup();
+        } catch (error) {
+          hidePopup();
+          showPopup("Fehler beim Generieren der Antwort: " + error.message);
+          console.error("Fehler beim Einfügen der Antwort:", error);
         }
       }
 
@@ -947,6 +989,13 @@ function hidePopup() {
           return;
         }
 
+        if (action === "direkteAntwort") {
+          await insertDirectReply();
+          lottieLoader.style.display = "none";
+          outputContainer.classList.remove("processing");
+          return;
+        }
+
         const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
         let fullPrompt = promptInput || "";
         if (action === "zusammenfassen") {
@@ -961,7 +1010,7 @@ function hidePopup() {
           fullPrompt = `${emailText}${promptInput}`;
         }
 
-        closeSettings(); // hatte viele bugs
+        closeSettings();
         const apiCall = mode === "azure" ? callAzure : callLokal;
         const response = await apiCall(fullPrompt);
         outputDiv.innerText = response;
@@ -1043,6 +1092,8 @@ function hidePopup() {
                   ? "Antwort formulieren"
                   : action === "übersetzen"
                   ? "Übersetzen"
+                  : action === "direkteAntwort"
+                  ? "Direkte Antwort einfügen"
                   : "Freier Modus";
             });
           } else {
