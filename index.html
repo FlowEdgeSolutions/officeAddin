@@ -351,21 +351,15 @@
         color: #e0e0e0;
       }
       .copy-button {
-        position: sticky;
-        bottom: 0.5rem;
-        right: 0.5rem;
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid #ccc;
         border-radius: 4px;
-        padding: 0.25rem;
+        padding: 0.25rem 0.5rem;
         font-size: 0.9rem;
         color: #1e90ff;
         cursor: pointer;
         transition: background 0.3s ease, color 0.3s ease;
         z-index: 10;
-        margin-left: auto;
-        margin-right: 0;
-        display: block;
       }
       .dark-mode .copy-button {
         border-color: #4a4e57;
@@ -414,7 +408,6 @@
         background: #1e90ff;
       }
       .send-button:disabled {
-        /* background: rgba(255, 255, 255, 0.1); */
         cursor: not-allowed;
       }
       .dark-mode .send-button:disabled {
@@ -535,6 +528,13 @@
       .prompt-input:focus {
         outline: 1px solid rgba(0, 0, 0, 0.702);
       }
+
+      .button-group {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+      }
     </style>
   </head>
   <script>
@@ -598,7 +598,10 @@ function hidePopup() {
           autoplay
         ></dotlottie-player>
         <div id="output">Warte auf Ausgabe...</div>
-        <button class="copy-button" onclick="copyOutputContent()">📋</button>
+        <div class="button-group">
+          <button class="copy-button" onclick="copyOutputContent()">📋 Kopieren</button>
+          <button class="copy-button" id="insertReplyBtn" style="display: none;" onclick="insertDirectReply()">✉️ Direkt einfügen</button>
+        </div>
       </div>
       <div class="input-container">
         <textarea
@@ -656,15 +659,6 @@ function hidePopup() {
               stroke-linejoin="round"
               d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
             />
-          </svg>
-        </button>
-        <button
-          class="action-button"
-          onclick="setAction('direkteAntwort')"
-          data-tooltip="Direkte Antwort"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
           </svg>
         </button>
         <button
@@ -766,6 +760,7 @@ function hidePopup() {
       const emailContentDiv = document.getElementById("emailContent");
       const emailSummaryDiv = document.getElementById("emailSummary");
       const lottieLoader = document.getElementById("lottieLoader");
+      const insertReplyBtn = document.getElementById("insertReplyBtn");
 
       let emailContent = "";
       let emailSubject = "";
@@ -819,8 +814,6 @@ function hidePopup() {
             ? "Antworten formulieren"
             : action === "übersetzen"
             ? "Übersetzen"
-            : action === "direkteAntwort"
-            ? "Direkte Antwort einfügen"
             : "Freier Modus";
         if (isContentLoaded) actionButton.disabled = false;
         updateSettings();
@@ -832,15 +825,6 @@ function hidePopup() {
         const greetingGroup = document.getElementById("greetingGroup");
         const lengthGroup = document.getElementById("lengthGroup");
         const languageGroup = document.getElementById("languageGroup");
-
-        // Verstecke alle Einstellungsgruppen für direkte Antwort
-        if (action === "direkteAntwort") {
-          toneGroup.style.display = "none";
-          greetingGroup.style.display = "none";
-          lengthGroup.style.display = "none";
-          languageGroup.style.display = "none";
-          return;
-        }
 
         toneGroup.style.display = action === "antworten" ? "block" : "none";
         greetingGroup.style.display = action === "antworten" ? "block" : "none";
@@ -866,23 +850,12 @@ function hidePopup() {
 
       async function insertDirectReply() {
         try {
-          const promptInput = document.getElementById("promptInput").value;
-          const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
-          const fullPrompt = `Formuliere eine direkte Antwort auf die folgende E-Mail im formellen Ton mit "Sie" Anrede (mittel) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Verzichte auf eine Grussformel am Ende:\n${emailText}${promptInput}`;
-
-          showPopup("Generiere Antwort...");
-
-          const apiCall = mode === "azure" ? callAzure : callLokal;
-          const generatedReply = await apiCall(fullPrompt);
-
-          // Direkt in das Antwortformular einfügen
-          Office.context.mailbox.item.displayReplyForm(generatedReply);
-          
-          hidePopup();
+          const outputText = document.getElementById("output").innerText;
+          Office.context.mailbox.item.displayReplyForm(outputText);
+          showPopup("Antwort wurde in das Antwortformular eingefügt");
         } catch (error) {
-          hidePopup();
-          showPopup("Fehler beim Generieren der Antwort: " + error.message);
-          console.error("Fehler beim Einfügen der Antwort:", error);
+          showPopup("Fehler beim Einfügen: " + error.message);
+          console.error("Fehler:", error);
         }
       }
 
@@ -907,7 +880,9 @@ function hidePopup() {
         textarea.select();
         try {
           document.execCommand("copy");
+          showPopup("Text wurde in die Zwischenablage kopiert");
         } catch (err) {
+          showPopup("Fehler beim Kopieren: " + err.message);
         } finally {
           document.body.removeChild(textarea);
         }
@@ -977,6 +952,7 @@ function hidePopup() {
         const outputContainer = outputDiv.parentElement;
         outputContainer.classList.add("processing");
         lottieLoader.style.display = "block";
+        insertReplyBtn.style.display = "none";
 
         outputDiv.innerText = "";
         lottieLoader.style.display = "block";
@@ -989,19 +965,12 @@ function hidePopup() {
           return;
         }
 
-        if (action === "direkteAntwort") {
-          await insertDirectReply();
-          lottieLoader.style.display = "none";
-          outputContainer.classList.remove("processing");
-          return;
-        }
-
         const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
         let fullPrompt = promptInput || "";
         if (action === "zusammenfassen") {
           fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]". Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,". Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
           fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
             language
@@ -1016,6 +985,11 @@ function hidePopup() {
         outputDiv.innerText = response;
         lottieLoader.style.display = "none";
         outputContainer.classList.remove("processing");
+        
+        // Nur bei Antworten den "Direkt einfügen"-Button anzeigen
+        if (action === "antworten") {
+          insertReplyBtn.style.display = "block";
+        }
       }
 
       async function summarizeEmail() {
@@ -1092,8 +1066,6 @@ function hidePopup() {
                   ? "Antwort formulieren"
                   : action === "übersetzen"
                   ? "Übersetzen"
-                  : action === "direkteAntwort"
-                  ? "Direkte Antwort einfügen"
                   : "Freier Modus";
             });
           } else {
