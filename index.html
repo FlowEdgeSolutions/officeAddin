@@ -534,31 +534,49 @@
         justify-content: flex-end;
         margin-top: 0.5rem;
       }
+      
+      /* Status Indicator Styles */
+      .status-indicator {
+        position: absolute;
+        top: 0.5rem;
+        right: 2rem;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+      }
+      
+      .status-indicator:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: -38px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1e90ff;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 13px;
+        white-space: nowrap;
+        z-index: 1000;
+      }
+      
+      .dark-mode .status-indicator:hover::after {
+        background: #87cefa;
+        color: #000;
+      }
     </style>
   </head>
-  <script>
-// Funktion zum Anzeigen des Popups
-function showPopup(message) {
-  const popup = document.getElementById('customPopup');
-  document.getElementById('popupContent').innerHTML = message;
-  popup.style.display = 'flex';
-}
-
-// Funktion zum Verstecken des Popups
-function hidePopup() {
-  document.getElementById('customPopup').style.display = 'none';
-}
-</script>
   <body>
-    <!-- Popup Container (am Ende des body tags) -->
-<div id="customPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
-  <div style="background:white; padding:20px; border-radius:8px; max-width:80%; max-height:80%; overflow:auto;">
-    <div id="popupContent"></div>
-    <button onclick="hidePopup()" style="margin-top:15px; padding:5px 10px; background:#1e90ff; color:white; border:none; border-radius:4px; cursor:pointer;">
-      Schließen
-    </button>
-  </div>
-</div>
+    <!-- Popup Container -->
+    <div id="customPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+      <div style="background:white; padding:20px; border-radius:8px; max-width:80%; max-height:80%; overflow:auto;">
+        <div id="popupContent"></div>
+        <button onclick="hidePopup()" style="margin-top:15px; padding:5px 10px; background:#1e90ff; color:white; border:none; border-radius:4px; cursor:pointer;">
+          Schließen
+        </button>
+      </div>
+    </div>
+    
     <div class="container">
       <div class="header">
         <img
@@ -567,6 +585,20 @@ function hidePopup() {
           class="logo"
         />
         <h1 class="main-heading">MailAider AI</h1>
+        
+        <!-- Status-Indikator mit Lottie-Animation -->
+        <div class="status-indicator" id="statusIndicator" data-tooltip="Verbindung wird hergestellt...">
+          <dotlottie-player
+            id="connectionStatus"
+            src="https://lottie.host/03e43891-40bc-477c-9603-429137a8f235/jClx25FzYf.lottie"
+            background="transparent"
+            speed="1"
+            style="width: 36px; height: 36px;"
+            loop
+            autoplay
+          ></dotlottie-player>
+        </div>
+        
         <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
       </div>
       <div class="error" id="error"></div>
@@ -587,15 +619,17 @@ function hidePopup() {
         </button>
       </div>
       <div class="output-container">
+        <!-- GPT-Ladeanimation -->
         <dotlottie-player
           id="lottieLoader"
-          src="https://lottie.host/c50dbde0-250a-43a1-8493-de801fb3caf5/zs2kPt4Uv9.lottie"
+          src="https://lottie.host/03e43891-40bc-477c-9603-429137a8f235/jClx25FzYf.lottie"
           background="transparent"
           speed="1"
-          style="width: 100px; height: 100px; margin: 0 auto; display: none"
+          style="width: 120px; height: 120px; margin: 0 auto; display: none"
           loop
           autoplay
         ></dotlottie-player>
+        
         <div id="output">Warte auf Ausgabe...</div>
         <div class="button-group">
           <button class="copy-button" onclick="copyOutputContent()">📋 Kopieren</button>
@@ -753,6 +787,8 @@ function hidePopup() {
       const emailSummaryDiv = document.getElementById("emailSummary");
       const lottieLoader = document.getElementById("lottieLoader");
       const insertReplyBtn = document.getElementById("insertReplyBtn");
+      const statusIndicator = document.getElementById("statusIndicator");
+      const connectionStatusPlayer = document.getElementById("connectionStatus");
 
       let emailContent = "";
       let emailSubject = "";
@@ -763,6 +799,18 @@ function hidePopup() {
       let greeting = "informell";
       let length = "kurz";
       let isContentLoaded = false;
+
+      // Funktion zum Anzeigen des Popups
+      function showPopup(message) {
+        const popup = document.getElementById('customPopup');
+        document.getElementById('popupContent').innerHTML = message;
+        popup.style.display = 'flex';
+      }
+
+      // Funktion zum Verstecken des Popups
+      function hidePopup() {
+        document.getElementById('customPopup').style.display = 'none';
+      }
 
       function logError(message) {
         console.error(message);
@@ -869,6 +917,27 @@ function hidePopup() {
         }
       }
 
+      // Verbindungsstatus aktualisieren
+      function updateConnectionStatus(status) {
+        if (status === "connected") {
+          statusIndicator.setAttribute("data-tooltip", "AI ist verbunden. DSGVO SICHER");
+          connectionStatusPlayer.load("https://lottie.host/315e81ec-fb44-44fe-a9c5-bf08ce9bc46b/dnLhElwMXh.lottie");
+          
+          // Klick-Event für DSGVO-Info
+          statusIndicator.addEventListener("click", () => {
+            showPopup("<h3>DSGVO-sichere KI-Verarbeitung</h3>" +
+                     "<p>Ihre Daten werden sicher verarbeitet:<br>" +
+                     "- Verschlüsselte Übertragung<br>" +
+                     "- Keine Datenspeicherung nach Verarbeitung<br>" +
+                     "- Konform mit Schweizer Datenschutzgesetzen<br>" +
+                     "- Keine Verwendung für Training</p>");
+          });
+        } else {
+          statusIndicator.setAttribute("data-tooltip", "Verbindung wird hergestellt...");
+          connectionStatusPlayer.load("https://lottie.host/03e43891-40bc-477c-9603-429137a8f235/jClx25FzYf.lottie");
+        }
+      }
+
       async function generateResponse(prompt) {
         try {
           const response = await fetch(
@@ -958,6 +1027,10 @@ function hidePopup() {
           "platform:",
           info.platform
         );
+        
+        // Initialisiere Verbindungsstatus als "wird hergestellt"
+        updateConnectionStatus("connecting");
+        
         if (!Office.context.mailbox || !Office.context.mailbox.item) {
           logError(
             "Kein E-Mail-Kontext verfügbar. Bitte eine E-Mail auswählen."
@@ -966,30 +1039,14 @@ function hidePopup() {
         }
 
         const item = Office.context.mailbox.item;
-        const isOutlookWeb = info.platform === "OfficeOnline";
 
-          emailSubject = item.subject || "Kein Betreff";
-          document.getElementById("emailSubject").innerText = emailSubject;
-          emailSender =
-            (item.from && (item.from.displayName || item.from.emailAddress)) ||
-            "Unbekannter Absender";
-          document.getElementById("emailSender").innerText =
-            "Von: " + emailSender;
-        
-          // item.from.getAsync((result) => { this is for compose mode
-          //   if (result.status === Office.AsyncResultStatus.Succeeded) {
-          //     emailSender =
-          //       result.value.displayName ||
-          //       result.value.emailAddress ||
-          //       "Unbekannter Absender";
-          //     document.getElementById("emailSender").innerText =
-          //       "Von: " + emailSender;
-          //   } else {
-          //     logError(
-          //       "Fehler beim Laden des Absenders: " + result.error.message
-          //     );
-          //   }
-          // });
+        emailSubject = item.subject || "Kein Betreff";
+        document.getElementById("emailSubject").innerText = emailSubject;
+        emailSender =
+          (item.from && (item.from.displayName || item.from.emailAddress)) ||
+          "Unbekannter Absender";
+        document.getElementById("emailSender").innerText =
+          "Von: " + emailSender;
 
         item.body.getAsync("text", (result) => {
           if (result.status === Office.AsyncResultStatus.Succeeded) {
@@ -1005,6 +1062,9 @@ function hidePopup() {
                   : action === "übersetzen"
                   ? "Übersetzen"
                   : "Freier Modus";
+              
+              // Verbindungsstatus auf "verbunden" aktualisieren
+              updateConnectionStatus("connected");
             });
           } else {
             logError("Fehler: " + result.error.message);
