@@ -947,18 +947,18 @@ function hidePopup() {
           return;
         }
 
-        const emailText = emailContent ? Kontext: ${emailContent}\n : "";
+        const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
         let fullPrompt = promptInput || "";
         if (action === "zusammenfassen") {
-          fullPrompt = Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput};
+          fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput};
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]“. Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,“. Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
-          fullPrompt = Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
+          fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
             language
-          )}:\n${emailText}${promptInput};
+          )}:\n${emailText}${promptInput}`;
         } else if (action === "freierModus") {
-          fullPrompt = ${emailText}${promptInput};
+          fullPrompt = `${emailText}${promptInput}`;
         }
 
         closeSettings(); // hatte viele bugs
@@ -971,7 +971,7 @@ function hidePopup() {
 
       async function summarizeEmail() {
         if (emailContent) {
-          const fullPrompt = Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent};
+          const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
           const response = await callAzure(fullPrompt);
           emailSummaryDiv.innerText =
             response || "Keine Zusammenfassung verfügbar.";
@@ -1054,6 +1054,4 @@ function hidePopup() {
       });
     </script>
   </body>
-</html>     Lotties: <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-<dotlottie-player src="https://lottie.host/c92a8a5d-1a9b-4e79-968c-ccd370fdcbb3/K6ZUSuXQTS.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>      Loading Lottie: <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
-<dotlottie-player src="https://lottie.host/ca615a42-7026-46ed-8ad3-5d1d3be3bee4/jRk8P0eZ6D.lottie" background="transparent" speed="1" style="width: 300px; height: 300px" loop autoplay></dotlottie-player>
+</html>
