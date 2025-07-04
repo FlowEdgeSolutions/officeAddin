@@ -359,7 +359,6 @@
         color: #1e90ff;
         cursor: pointer;
         transition: background 0.3s ease, color 0.3s ease;
-        z-index: 10;
       }
       .dark-mode .copy-button {
         border-color: #4a4e57;
@@ -600,7 +599,7 @@ function hidePopup() {
         <div id="output">Warte auf Ausgabe...</div>
         <div class="button-group">
           <button class="copy-button" onclick="copyOutputContent()">📋 Kopieren</button>
-          <button class="copy-button" id="insertReplyBtn" style="display: none;" onclick="insertDirectReply()">✉️ Antwort übernehmen</button>
+          <button class="copy-button" id="insertReplyBtn" style="display: none;" onclick="insertDirectReply()">✉️ Direkt einfügen</button>
         </div>
       </div>
       <div class="input-container">
@@ -703,13 +702,6 @@ function hidePopup() {
         </button>
       </div>
       <div class="settings-modal" id="settingsModal">
-        <div class="form-group" id="modeGroup">
-          <label>Verarbeitung:</label>
-          <select id="modeSelect" onchange="updateSettings()">
-            <option value="azure">⚡ Schnell (Azure)</option>
-            <option value="ollama">🔒 Datenschutz (Ollama)</option>
-          </select>
-        </div>
         <div class="form-group" id="toneGroup" style="display: none">
           <label>Tonfall:</label>
           <select id="toneSelect">
@@ -765,7 +757,6 @@ function hidePopup() {
       let emailContent = "";
       let emailSubject = "";
       let emailSender = "";
-      let mode = "azure";
       let action = "antworten";
       let tone = "formell";
       let language = "deutsch";
@@ -786,7 +777,6 @@ function hidePopup() {
       function openSettings() {
         if (isContentLoaded) {
           settingsModal.classList.add("active");
-          document.getElementById("modeSelect").value = mode;
           updateSettings();
         }
       }
@@ -820,7 +810,6 @@ function hidePopup() {
       }
 
       function updateSettings() {
-        mode = document.getElementById("modeSelect").value;
         const toneGroup = document.getElementById("toneGroup");
         const greetingGroup = document.getElementById("greetingGroup");
         const lengthGroup = document.getElementById("lengthGroup");
@@ -829,22 +818,14 @@ function hidePopup() {
         toneGroup.style.display = action === "antworten" ? "block" : "none";
         greetingGroup.style.display = action === "antworten" ? "block" : "none";
         lengthGroup.style.display = action === "antworten" ? "block" : "none";
-        languageGroup.style.display =
-          action === "übersetzen" ? "block" : "none";
+        languageGroup.style.display = action === "übersetzen" ? "block" : "none";
 
         if (action === "antworten") {
           tone = document.getElementById("toneSelect").value;
           greeting = document.getElementById("greetingSelect").value;
           length = document.getElementById("lengthSelect").value;
         } else if (action === "übersetzen") {
-          language = mapLanguage(
-            document.getElementById("languageSelect").value
-          );
-        } else if (action === "freierModus") {
-          toneGroup.style.display = "none";
-          greetingGroup.style.display = "none";
-          lengthGroup.style.display = "none";
-          languageGroup.style.display = "none";
+          language = mapLanguage(document.getElementById("languageSelect").value);
         }
       }
 
@@ -888,7 +869,7 @@ function hidePopup() {
         }
       }
 
-      async function callAzure(prompt) {
+      async function generateResponse(prompt) {
         try {
           const response = await fetch(
             "https://openaiaddinapi.openai.azure.com/openai/deployments/gpt-4o_MailAiderAi_OutlookAddIn/chat/completions?api-version=2025-01-01-preview",
@@ -896,15 +877,13 @@ function hidePopup() {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "api-key":
-                  "9psvVslPXfp4xbJ9SzRXpfx9E9lP8TLiFcC3IZgf43RLNQA9RiV4JQQJ99BFACI8hq2XJ3w3AAABACOGHQcr",
+                "api-key": "9psvVslPXfp4xbJ9SzRXpfx9E9lP8TLiFcC3IZgf43RLNQA9RiV4JQQJ99BFACI8hq2XJ3w3AAABACOGHQcr",
               },
               body: JSON.stringify({
                 messages: [
                   {
                     role: "system",
-                    content:
-                      "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist.",
+                    content: "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist.",
                   },
                   { role: "user", content: prompt },
                 ],
@@ -913,36 +892,9 @@ function hidePopup() {
             }
           );
           const data = await response.json();
-          return (
-            data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten."
-          );
+          return data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten.";
         } catch (error) {
-          return "❌ Fehler bei Azure: " + error.message;
-        }
-      }
-
-      async function callLokal(prompt) {
-        try {
-          const response = await fetch("http://localhost:11434/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: "nous-hermes2",
-              messages: [
-                {
-                  role: "system",
-                  content:
-                    "Rolle: Du bist ein professioneller E-Mail-Assistent. Nutze konsequent Schweizer Rechtschreibung. Bei Antworten beachte Tonalität, Anredeform und Textlänge gemäss Benutzervorgabe. Der Benutzertext hat Vorrang vor dem E-Mail-Inhalt.",
-                },
-                { role: "user", content: prompt },
-              ],
-              stream: false,
-            }),
-          });
-          const data = await response.json();
-          return data.message?.content || "❌ Keine Antwort erhalten.";
-        } catch (error) {
-          return "❌ Fehler bei Lokal: " + error.message;
+          return "❌ Fehler bei der Generierung: " + error.message;
         }
       }
 
@@ -980,13 +932,11 @@ function hidePopup() {
         }
 
         closeSettings();
-        const apiCall = mode === "azure" ? callAzure : callLokal;
-        const response = await apiCall(fullPrompt);
+        const response = await generateResponse(fullPrompt);
         outputDiv.innerText = response;
         lottieLoader.style.display = "none";
         outputContainer.classList.remove("processing");
         
-        // Nur bei Antworten den "Direkt einfügen"-Button anzeigen
         if (action === "antworten") {
           insertReplyBtn.style.display = "block";
         }
@@ -995,7 +945,7 @@ function hidePopup() {
       async function summarizeEmail() {
         if (emailContent) {
           const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent}`;
-          const response = await callAzure(fullPrompt);
+          const response = await generateResponse(fullPrompt);
           emailSummaryDiv.innerText =
             response || "Keine Zusammenfassung verfügbar.";
         }
