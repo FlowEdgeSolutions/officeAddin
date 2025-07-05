@@ -80,6 +80,7 @@
         text-align: center;
         display: flex;
         align-items: center;
+        justify-content: center;
       }
       .logo {
         width: 30px;
@@ -96,10 +97,15 @@
       .dark-mode .main-heading {
         color: #87cefa;
       }
-      .dark-mode-toggle {
+      .header-controls {
         position: absolute;
         top: 0.5rem;
         right: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .dark-mode-toggle {
         font-size: 1.2rem;
         cursor: pointer;
         color: #1e90ff;
@@ -537,11 +543,8 @@
       
       /* Status Indicator Styles */
       .status-indicator {
-        position: absolute;
-        top: 0.5rem;
-        right: 2rem;
-        width: 36px;
-        height: 36px;
+        width: 24px;
+        height: 24px;
         cursor: pointer;
       }
       
@@ -586,20 +589,22 @@
         />
         <h1 class="main-heading">MailAider AI</h1>
         
-        <!-- Status-Indikator mit Lottie-Animation -->
-        <div class="status-indicator" id="statusIndicator" data-tooltip="Verbindung wird hergestellt...">
-          <dotlottie-player
-            id="connectionStatus"
-            src="https://lottie.host/03e43891-40bc-477c-9603-429137a8f235/jClx25FzYf.lottie"
-            background="transparent"
-            speed="1"
-            style="width: 150px; height: 150px;"
-            loop
-            autoplay
-          ></dotlottie-player>
+        <div class="header-controls">
+          <!-- Status-Indikator mit Lottie-Animation -->
+          <div class="status-indicator" id="statusIndicator" data-tooltip="Verbindung wird hergestellt...">
+            <dotlottie-player
+              id="connectionStatus"
+              src="https://lottie.host/03e43891-40bc-477c-9603-429137a8f235/jClx25FzYf.lottie"
+              background="transparent"
+              speed="1"
+              style="width: 24px; height: 24px;"
+              loop
+              autoplay
+            ></dotlottie-player>
+          </div>
+          
+          <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
         </div>
-        
-        <span class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</span>
       </div>
       <div class="error" id="error"></div>
       <div class="email-viewer">
