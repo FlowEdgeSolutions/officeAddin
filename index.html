@@ -541,12 +541,31 @@
       }
       
       /* --- Updated Tooltip Styles --- */
-      .status-indicator:hover::after,
-      .action-button:hover::after {
+      /* Tooltips unter Elementen (Standard) */
+      .status-indicator:hover::after {
         content: attr(data-tooltip);
         position: absolute;
         top: auto;
         bottom: -2.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1e90ff;
+        color: #fff;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+      
+      /* Tooltips über Action-Buttons */
+      .action-button:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        top: -2.5rem;
+        bottom: auto;
         left: 50%;
         transform: translateX(-50%);
         background: #1e90ff;
@@ -594,7 +613,12 @@
           font-size: 0.7rem;
           white-space: normal;
           width: 120px;
+        }
+        .status-indicator:hover::after {
           bottom: -3rem;
+        }
+        .action-button:hover::after {
+          top: -3rem;
         }
       }
     </style>
