@@ -784,7 +784,7 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 1 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
             />
           </svg>
         </button>
@@ -992,6 +992,7 @@
         }
       }
 
+      // Direkte API-Anbindung an OpenAI
       async function generateResponse(prompt) {
         try {
           const response = await fetch(
@@ -1000,24 +1001,32 @@
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "api-key": "9psvVslPXfp4xbJ9SzRXpfx9E9lP8TLiFcC3IZgf43RLNQA9RiV4JQQJ99BFACI8hq2XJ3w3AAABACOGHQcr",
+                "api-key": "9psvVslPXfp4xbJ9SzRXpfx9E9lP8TLiFcC3IZgf43RLNQA9RiV4JQQJ99BFACI8hq2XJ3w3AAABACOGHQcr"
               },
               body: JSON.stringify({
                 messages: [
                   {
                     role: "system",
-                    content: "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist.",
+                    content: "Du bist ein E-Mail-Assistent. Verwende immer die Schweizer Rechtschreibung. Nutze den bereitgestellten E-Mail-Inhalt als Grundlage, sofern kein separater Benutzertext gegeben ist."
                   },
-                  { role: "user", content: prompt },
+                  { role: "user", content: prompt }
                 ],
                 temperature: 0.6,
-              }),
+                max_tokens: 1000
+              })
             }
           );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error?.message || `API-Fehler: ${response.status}`);
+          }
+
           const data = await response.json();
-          return data.choices?.[0]?.message?.content || "❌ Keine Antwort erhalten.";
+          return data.choices[0].message.content;
         } catch (error) {
-          return "❌ Fehler bei der Generierung: " + error.message;
+          console.error("API Fehler:", error);
+          return `❌ Fehler bei der Generierung: ${error.message}`;
         }
       }
 
@@ -1040,18 +1049,19 @@
           return;
         }
 
-        const emailText = emailContent ? Kontext: ${emailContent}\n : "";
+        const emailText = emailContent ? `Kontext: ${emailContent}\n` : "";
         let fullPrompt = promptInput || "";
+        
         if (action === "zusammenfassen") {
-          fullPrompt = Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput};
+          fullPrompt = `Fasse den Inhalt der folgenden E-Mail in Stichpunkten zusammen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung darf etwas ausführlicher sein, soll aber dennoch klar und strukturiert bleiben. Ziel ist es, dem Nutzer einen schnellen, aber umfassenden Überblick zu geben: Worum geht es? Welche Themen oder Anliegen werden genannt? Was sind wichtige Informationen oder nächste Schritte? \n\n${emailText}${promptInput}`;
         } else if (action === "antworten") {
-          fullPrompt = Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]". Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,". Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput};
+          fullPrompt = `Formuliere eine Antwort auf die folgende E-Mail im ${tone} Ton mit ${greeting} Anrede (${length}) Sprachstil: Verwende durchgängig die Schweizer Rechtschreibung. Inhaltliche Grundlage: Nutze den bereitgestellten E-Mail-Inhalt als Ausgangspunkt, ausser es wird ein separater Benutzertext angegeben, dann hat dieser Vorrang. Begrüssung: Beginne die Antwort mit: „Hallo [Name des Absenders der ursprünglichen E-Mail]". Wenn der Name des Absenders nicht erkannt werden kann, schreibe nur: „Hallo,". Grussformel: Lasse die Grussformel beim Beantworten von E-Mails aus. Tonalität: Parameter wie formell/informell sowie Sie/Du werden vom Benutzer angegeben. Richte Formulierung, Ansprache und Stil konsequent nach diesen Angaben aus. Formatierung: Lasse Betreff immer aus und bringe es nicht in die Antwort ein. Verzichte am Ende auf eine Grussformel.:\n${emailText}${promptInput}`;
         } else if (action === "übersetzen") {
-          fullPrompt = Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
+          fullPrompt = `Übersetze den folgenden E-Mail-Inhalt vollständig und ausschließlich ins ${mapLanguage(
             language
-          )}:\n${emailText}${promptInput};
+          )}:\n${emailText}${promptInput}`;
         } else if (action === "freierModus") {
-          fullPrompt = ${emailText}${promptInput};
+          fullPrompt = `${emailText}${promptInput}`;
         }
 
         closeSettings();
@@ -1066,64 +1076,68 @@
       }
 
       async function summarizeEmail() {
-        if (emailContent) {
-          const fullPrompt = Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten und nicht in ganzen Sätzen. Nutze Anstatt Striche - Punkte ● prägnanten Stichpunkten zusammen. Die Zusammenfassung soll dem Nutzer einen schnellen Überblick geben: Worum geht es? Was sind die wichtigsten Informationen oder nächsten Schritte?\n\n${emailContent};
+        if (!emailContent) {
+          emailSummaryDiv.innerText = "Kein Inhalt zum Zusammenfassen";
+          return;
+        }
+        
+        try {
+          const fullPrompt = `Fasse den Inhalt der folgenden E-Mail in maximal 4 Stichpunkten zusammen: ${emailContent}`;
           const response = await generateResponse(fullPrompt);
-          emailSummaryDiv.innerText =
-            response || "Keine Zusammenfassung verfügbar.";
+          emailSummaryDiv.innerText = response || "Zusammenfassung nicht verfügbar";
+        } catch (error) {
+          emailSummaryDiv.innerText = "Fehler beim Generieren der Zusammenfassung";
+          console.error("Summarization error:", error);
         }
       }
 
-      Office.onReady((info) => {
-        console.log(
-          "Office.js funktioniert host:",
-          info.host,
-          "platform:",
-          info.platform
-        );
-        
-        // Initialisiere Verbindungsstatus als "wird hergestellt"
-        updateConnectionStatus("connecting");
-        
-        if (!Office.context.mailbox || !Office.context.mailbox.item) {
-          logError(
-            "Kein E-Mail-Kontext verfügbar. Bitte eine E-Mail auswählen."
-          );
-          return;
-        }
-
-        const item = Office.context.mailbox.item;
-
-        emailSubject = item.subject || "Kein Betreff";
-        document.getElementById("emailSubject").innerText = emailSubject;
-        emailSender =
-          (item.from && (item.from.displayName || item.from.emailAddress)) ||
-          "Unbekannter Absender";
-        document.getElementById("emailSender").innerText =
-          "Von: " + emailSender;
-
-        item.body.getAsync("text", (result) => {
-          if (result.status === Office.AsyncResultStatus.Succeeded) {
-            emailContent = result.value || "Inhalt verfügbar";
-            summarizeEmail().then(() => {
-              isContentLoaded = true;
-              actionButton.disabled = false;
-              actionButton.textContent =
-                action === "zusammenfassen"
-                  ? "Zusammenfassen"
-                  : action === "antworten"
-                  ? "Antwort formulieren"
-                  : action === "übersetzen"
-                  ? "Übersetzen"
-                  : "Freier Modus";
-              
-              // Verbindungsstatus auf "verbunden" aktualisieren
-              updateConnectionStatus("connected");
-            });
-          } else {
-            logError("Fehler: " + result.error.message);
+      Office.onReady(async (info) => {
+        try {
+          console.log("Office.js geladen");
+          
+          // Verbindungsstatus initialisieren
+          updateConnectionStatus("connecting");
+          
+          if (!Office.context.mailbox || !Office.context.mailbox.item) {
+            throw new Error("Kein E-Mail-Kontext verfügbar");
           }
-        });
+
+          const item = Office.context.mailbox.item;
+
+          emailSubject = item.subject || "Kein Betreff";
+          document.getElementById("emailSubject").innerText = emailSubject;
+          emailSender =
+            (item.from && (item.from.displayName || item.from.emailAddress)) ||
+            "Unbekannter Absender";
+          document.getElementById("emailSender").innerText =
+            "Von: " + emailSender;
+
+          item.body.getAsync("text", (result) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              emailContent = result.value || "Inhalt verfügbar";
+              summarizeEmail().then(() => {
+                isContentLoaded = true;
+                actionButton.disabled = false;
+                actionButton.textContent =
+                  action === "zusammenfassen"
+                    ? "Zusammenfassen"
+                    : action === "antworten"
+                    ? "Antwort formulieren"
+                    : action === "übersetzen"
+                    ? "Übersetzen"
+                    : "Freier Modus";
+                
+                // Verbindungsstatus auf "verbunden" aktualisieren
+                updateConnectionStatus("connected");
+              });
+            } else {
+              logError("Fehler: " + result.error.message);
+            }
+          });
+        } catch (error) {
+          logError("Initialisierungsfehler: " + error.message);
+          updateConnectionStatus("error");
+        }
       }).catch((error) => {
         logError("Office.js Fehler: " + error.message);
       });
